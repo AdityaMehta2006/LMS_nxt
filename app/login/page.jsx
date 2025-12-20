@@ -44,7 +44,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white font-sans">
+    <div className="min-h-screen flex bg-white dark:bg-gray-900 font-sans transition-colors duration-300">
       {/* LEFT SIDE - FORM */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -55,7 +55,7 @@ export default function LoginPage() {
         <div className="max-w-md w-full">
           <div className="mb-10">
             <h2 className="text-sm font-bold tracking-[0.2em] text-gray-400 mb-2 uppercase">Welcome to</h2>
-            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
+            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 tracking-tight">
               VL-PROLAB
             </h1>
           </div>
@@ -64,7 +64,7 @@ export default function LoginPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium flex items-center gap-2"
+              className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2"
             >
               <span className="w-2 h-2 rounded-full bg-red-500" /> {error}
             </motion.div>
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">Username/Email</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">Username/Email</label>
               <div className="relative group">
                 <input
                   type="email"
@@ -80,14 +80,14 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
-                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-black focus:bg-white transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:border-black dark:focus:border-gray-500 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 font-medium text-gray-800 dark:text-white placeholder-gray-400"
                   placeholder="Enter your email"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">Password</label>
               <div className="relative group">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -95,13 +95,13 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
-                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-black focus:bg-white transition-all duration-300 font-medium text-gray-800 placeholder-gray-400"
+                  className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:border-black dark:focus:border-gray-500 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 font-medium text-gray-800 dark:text-white placeholder-gray-400"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                 >
                   {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                 </button>
@@ -113,7 +113,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-black text-white rounded-[2rem] font-bold text-lg hover:bg-gray-900 transition-all flex items-center justify-center gap-2 shadow-xl shadow-gray-200 mt-4"
+              className="w-full py-4 bg-black dark:bg-blue-600 text-white rounded-[2rem] font-bold text-lg hover:bg-gray-900 dark:hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-xl shadow-gray-200 dark:shadow-none mt-4"
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -126,11 +126,11 @@ export default function LoginPage() {
           <div className="mt-8 text-center space-y-4">
             <button
               onClick={() => router.push("/credits")}
-              className="text-sm font-medium text-gray-500 hover:text-black transition-colors underline decoration-gray-300 hover:decoration-black underline-offset-4"
+              className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors underline decoration-gray-300 dark:decoration-gray-600 hover:decoration-black dark:hover:decoration-white underline-offset-4"
             >
               View Credits
             </button>
-            <p className="text-xs text-gray-300 font-medium">VL ProLab © 2025</p>
+            <p className="text-xs text-gray-300 dark:text-gray-600 font-medium">VL ProLab © 2025</p>
           </div>
         </div>
       </motion.div>

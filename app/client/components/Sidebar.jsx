@@ -133,7 +133,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
     return (
         <>
             {/* MOBILE HEADER (Visible only on small screens) */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50 flex items-center justify-between px-4">
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50 flex items-center justify-between px-4 transition-colors">
                 <button onClick={() => setIsOpen(true)} className="p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                     <Menu size={24} />
                 </button>
@@ -149,7 +149,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsOpen(false)}
-                        className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                        className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                     />
                 )}
             </AnimatePresence>
@@ -159,7 +159,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                 initial={false}
                 animate={isOpen ? "open" : "closed"}
                 variants={sidebarVariants}
-                className="lg:hidden fixed top-0 left-0 bottom-0 z-50 w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 shadow-xl flex flex-col"
+                className="lg:hidden fixed top-0 left-0 bottom-0 z-50 w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 shadow-2xl flex flex-col"
             >
                 <div className="absolute top-4 right-4">
                     <button onClick={() => setIsOpen(false)} className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
