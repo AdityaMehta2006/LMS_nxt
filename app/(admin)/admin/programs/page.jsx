@@ -38,21 +38,21 @@ function Programs() {
           <Typography
             variant="h3"
             component="h1"
-            className="text-5xl font-bold text-gray-800"
+            className="text-5xl font-bold text-gray-800 dark:text-white"
           >
             Academic Programs
           </Typography>
-          <button className="border-2 font-bold text-xl bg-black text-white p-2 rounded-2xl" onClick={() => { setopen(true) }}>
+          <button className="border-2 font-bold text-xl bg-black dark:bg-blue-600 dark:border-blue-600 text-white p-2 rounded-2xl hover:opacity-80 transition-opacity" onClick={() => { setopen(true) }}>
             +Add Program
           </button>
           <CreateProgramModal open={open} onClose={() => setopen(false)} />
         </div>
-        <Typography variant="subtitle1" className="text-gray-600 mb-6">
+        <Typography variant="subtitle1" className="text-gray-600 dark:text-gray-400 mb-6">
           Browse all academic programs offered by the institution
         </Typography>
       </Box>
 
-      <div className="w-full text-black p-5">
+      <div className="w-full text-black dark:text-white p-5">
         {loading ? (
           <Typography className="text-gray-500">Loading programs…</Typography>
         ) : (

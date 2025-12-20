@@ -133,7 +133,7 @@ export default function EditorCourseDetail() {
                                             </div>
                                         </AccordionSummary>
 
-                                        <AccordionDetails sx={{ backgroundColor: "#f9fafb" }}>
+                                        <AccordionDetails sx={{ backgroundColor: 'inherit' }} className="bg-gray-50 dark:bg-gray-900/50">
                                             <div className="space-y-4">
 
 
@@ -141,7 +141,7 @@ export default function EditorCourseDetail() {
                                                 {/* Topics List */}
                                                 {!unit.topics ||
                                                     (unit.topics.length === 0 && (
-                                                        <p className="text-gray-500 italic text-center py-4">
+                                                        <p className="text-gray-500 dark:text-gray-400 italic text-center py-4">
                                                             No topics added yet
                                                         </p>
                                                     ))}
@@ -164,6 +164,7 @@ export default function EditorCourseDetail() {
                                                                     borderRadius: 2,
                                                                     "&:hover": { boxShadow: 3 },
                                                                 }}
+                                                                className="bg-white dark:bg-gray-800 dark:text-white"
                                                             >
                                                                 {/* Topic Info */}
                                                                 <Box

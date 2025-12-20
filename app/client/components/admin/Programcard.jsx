@@ -22,7 +22,7 @@ const AdminProgramcard = ({ id, programName, programCode, schoolName }) => {
             <Typography
               variant="h6"
               component="h3"
-              className="font-bold text-gray-800 leading-tight flex-1"
+              className="font-bold text-gray-800 dark:text-white leading-tight flex-1"
             >
               {programName}
             </Typography>
@@ -52,7 +52,7 @@ const AdminProgramcard = ({ id, programName, programCode, schoolName }) => {
               label={programCode}
               size="small"
               variant="outlined"
-              className="font-mono font-semibold"
+              className="font-mono font-semibold dark:border-gray-600 dark:text-gray-300"
               color="primary"
             />
           </Box>
@@ -61,19 +61,19 @@ const AdminProgramcard = ({ id, programName, programCode, schoolName }) => {
           <Box className="flex items-center gap-2 mb-4">
             <Typography
               variant="body2"
-              className="text-gray-600 flex-1"
+              className="text-gray-600 dark:text-gray-400 flex-1"
             >
               {schoolName}
             </Typography>
           </Box>
 
           {/* Footer */}
-          <Box className="mt-auto pt-4 border-t border-gray-100">
+          <Box className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
             <Typography
               variant="caption"
-              className="text-blue-600 font-medium hover:text-blue-800"
+              className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-800 dark:hover:text-blue-300"
             >
-              View Courses →
+              View courses →
             </Typography>
           </Box>
         </Box>

@@ -74,7 +74,8 @@ const CreateSchoolModal = ({ open, onClose }) => {
                         disabled={loading || !name}
                         onClick={handleSubmit}
                         size="large"
-                        sx={{ backgroundColor: "black", "&:hover": { backgroundColor: "#333" } }}
+                        className="bg-black hover:bg-gray-800 dark:bg-blue-600 dark:hover:bg-blue-700"
+                        sx={{}}
                     >
                         {loading ? "Creating..." : "Create School"}
                     </Button>

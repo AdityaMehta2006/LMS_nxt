@@ -121,8 +121,8 @@ const AdminAssign = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col gap-2"
             >
-                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Manage Assignments</h1>
-                <p className="text-gray-500">Assign teachers and editors to courses.</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Manage Assignments</h1>
+                <p className="text-gray-500 dark:text-gray-400">Assign teachers and editors to courses.</p>
             </motion.div>
 
             {/* ASSIGNMENT FORM */}
@@ -130,7 +130,7 @@ const AdminAssign = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+                className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
             >
                 <div className="flex flex-col md:flex-row gap-4 items-end">
                     <Autocomplete
@@ -163,9 +163,10 @@ const AdminAssign = () => {
                             px: 4,
                             borderRadius: '12px',
                             fontWeight: 600,
-                            bgcolor: 'black',
-                            '&:hover': { bgcolor: '#333' }
+                            // bgcolor: 'black',  <-- Removed to let Tailwind handle it
+                            // '&:hover': { bgcolor: '#333' }
                         }}
+                        className="bg-black hover:bg-gray-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
                     >
                         {submitting ? 'Assigning...' : 'Assign Role'}
                     </Button>
@@ -177,31 +178,31 @@ const AdminAssign = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
+                className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
             >
-                <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-800">Active Assignments</h2>
+                <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white">Active Assignments</h2>
                 </div>
                 <TableContainer>
                     <Table>
                         <TableHead>
-                            <TableRow sx={{ bgcolor: '#f9fafb' }}>
-                                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>User</TableCell>
-                                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Role</TableCell>
-                                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Course</TableCell>
-                                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Program</TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 600, color: '#6b7280' }}>Actions</TableCell>
+                            <TableRow sx={{ bgcolor: 'transparent' }} className="bg-gray-50 dark:bg-gray-700/50">
+                                <TableCell sx={{ fontWeight: 600 }} className="text-gray-500 dark:text-gray-300">User</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} className="text-gray-500 dark:text-gray-300">Role</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} className="text-gray-500 dark:text-gray-300">Course</TableCell>
+                                <TableCell sx={{ fontWeight: 600 }} className="text-gray-500 dark:text-gray-300">Program</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 600 }} className="text-gray-500 dark:text-gray-300">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {assignments.map((assign) => (
-                                <TableRow key={`${assign.userId}-${assign.courseId}`} sx={{ '&:hover': { bgcolor: '#f3f4f6' } }}>
+                                <TableRow key={`${assign.userId}-${assign.courseId}`} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                     <TableCell>
                                         <div className="flex flex-col">
-                                            <span className="font-semibold text-gray-800">
+                                            <span className="font-semibold text-gray-800 dark:text-white">
                                                 {assign.user?.firstName} {assign.user?.lastName}
                                             </span>
-                                            <span className="text-xs text-gray-500">{assign.user?.email}</span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">{assign.user?.email}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -217,11 +218,11 @@ const AdminAssign = () => {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-gray-800">{assign.course?.courseCode}</span>
-                                            <span className="text-sm text-gray-500">{assign.course?.title}</span>
+                                            <span className="font-medium text-gray-800 dark:text-white">{assign.course?.courseCode}</span>
+                                            <span className="text-sm text-gray-500 dark:text-gray-400">{assign.course?.title}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell>{assign.course?.program?.programName}</TableCell>
+                                    <TableCell className="dark:text-gray-300">{assign.course?.program?.programName}</TableCell>
                                     <TableCell align="right">
                                         <IconButton
                                             onClick={() => handleRevoke(assign.userId, assign.courseId)}
