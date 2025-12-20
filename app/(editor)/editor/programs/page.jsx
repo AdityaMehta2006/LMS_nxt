@@ -33,10 +33,10 @@ function Programs() {
   return (
     <>
       <Box className="pt-25 p-6">
-        <Typography variant="h3" component="h1" className="text-5xl font-bold text-gray-800 mb-2">
+        <Typography variant="h3" component="h1" className="text-5xl font-bold text-gray-800 dark:text-white mb-2">
           Academic Programs
         </Typography>
-        <Typography variant="subtitle1" className="text-gray-600 mb-6">
+        <Typography variant="subtitle1" className="text-gray-600 dark:text-gray-400 mb-6">
           Browse all academic programs offered by the institution
         </Typography>
       </Box>

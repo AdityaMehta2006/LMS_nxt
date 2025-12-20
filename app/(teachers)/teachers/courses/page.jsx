@@ -45,7 +45,7 @@ const Page = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Your Courses</h1>
+            <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Your Courses</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {courses.map((course) => (
                     <div key={course.course_id} className="flex">

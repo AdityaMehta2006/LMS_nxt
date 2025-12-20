@@ -92,20 +92,21 @@ function CourseContent() {
         animate={{ opacity: 1, x: 0 }}
         className="flex flex-col gap-2"
       >
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">My Courses</h1>
-        <p className="text-gray-500">Access and edit your assigned course materials.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">My Courses</h1>
+        <p className="text-gray-500 dark:text-gray-400">Access and edit your assigned course materials.</p>
       </motion.div>
 
       {/* FILTER BAR */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4">
-        <FormControl size="small" sx={{ minWidth: 240 }}>
-          <InputLabel>Filter by School</InputLabel>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col sm:flex-row gap-4">
+        <FormControl size="small" sx={{ minWidth: 240 }} className="dark:bg-gray-700 rounded-lg">
+          <InputLabel className="dark:text-gray-300">Filter by School</InputLabel>
           <Select
             value={selectedSchool}
             label="Filter by School"
             onChange={handleSchoolChange}
             disabled={Boolean(selectedProgramme)}
             sx={{ borderRadius: '10px' }}
+            className="dark:text-white"
           >
             <MenuItem value=""><em>All Schools</em></MenuItem>
             {schoolOptions.map((school) => (
@@ -114,14 +115,15 @@ function CourseContent() {
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 240 }}>
-          <InputLabel>Filter by Programme</InputLabel>
+        <FormControl size="small" sx={{ minWidth: 240 }} className="dark:bg-gray-700 rounded-lg">
+          <InputLabel className="dark:text-gray-300">Filter by Programme</InputLabel>
           <Select
             value={selectedProgramme}
             label="Filter by Programme"
             onChange={handleProgrammeChange}
             disabled={Boolean(selectedSchool)}
             sx={{ borderRadius: '10px' }}
+            className="dark:text-white"
           >
             <MenuItem value=""><em>All Programmes</em></MenuItem>
             {programmeOptions.map((prog) => (
