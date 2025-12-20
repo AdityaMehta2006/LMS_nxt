@@ -44,7 +44,6 @@ import {
 } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
-// (Removed duplicates)
 
 // Dynamically import Recharts component with NO SSR
 const AnalyticsCharts = dynamic(
@@ -103,7 +102,6 @@ const AdminDash = () => {
     totalTopics: 0,
     topicsPublished: 0
   });
-  const [isMounted, setIsMounted] = useState(false);
   const [analytics, setAnalytics] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -137,13 +135,68 @@ const AdminDash = () => {
   };
 
   useEffect(() => {
-    setIsMounted(true);
     fetchDashboardData();
   }, []);
 
-  // ... (User handlers remain the same) 
+  const handleCreateUser = async () => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser)
+      });
+      if (res.ok) {
+        setOpenUserModal(false);
+        fetchDashboardData();
+        setNewUser({ firstName: "", lastName: "", email: "", password: "", role: "student" });
+      } else {
+        alert("Failed to create user");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // ... (Sort/Filter logic remains the same)
+  const handleDeleteUser = async (userId) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+      if (res.ok) fetchDashboardData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateRole = async (userId, newRole) => {
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) fetchDashboardData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    setSortConfig({ key, direction });
+  };
+
+  const sortedUsers = [...users].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const filteredUsers = sortedUsers.filter(user =>
+    user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>;
   if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
