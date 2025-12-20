@@ -1,8 +1,10 @@
 "use client";
+
 import React, { useState, useEffect, Suspense, useCallback } from "react";
-import { Grid, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { Masonry } from "@mui/lab";
+import { Box, FormControl, InputLabel, Select, MenuItem, Button, Menu } from "@mui/material";
 import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Add, FilterList, Search } from "@mui/icons-material";
 import AdminCoursecard from "../../../client/components/admin/Coursecard";
 import CreateCourseModal from "../../../client/components/admin/CreateCourseModal";
 
@@ -19,25 +21,32 @@ function CourseContent() {
   // Filter state
   const [selectedSchool, setSelectedSchool] = useState("");
   const [selectedProgramme, setSelectedProgramme] = useState(searchParams.get("program") || "");
+  const [loading, setLoading] = useState(true);
 
   // Fetch data
   const fetchData = useCallback(async () => {
-    const response = await fetch("/api/teacher/display");
-    if (!response.ok) {
-      console.error("Failed to fetch data");
-      return;
+    try {
+      setLoading(true);
+      const response = await fetch("/api/teacher/display");
+      if (!response.ok) {
+        console.error("Failed to fetch data");
+        return;
+      }
+
+      const data = await response.json();
+      const mydata = data.courses || [];
+      setCourses(mydata);
+
+      const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
+      const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
+      setSchoolOptions(schools);
+      setProgrammeOptions(programmes);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    const data = await response.json();
-    const mydata = data.courses || [];
-    setCourses(mydata);
-    // setFilteredCourses(mydata); // filtering effect will handle this
-
-    const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
-    const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
-    setSchoolOptions(schools);
-    setProgrammeOptions(programmes);
-  }, []); // Empty dependency array as it doesn't depend on external values
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -60,17 +69,13 @@ function CourseContent() {
   const handleSchoolChange = (event) => {
     const newValue = event.target.value;
     setSelectedSchool(newValue);
-    if (newValue) {
-      setSelectedProgramme("");
-    }
+    if (newValue) setSelectedProgramme("");
   };
 
   const handleProgrammeChange = (event) => {
     const newValue = event.target.value;
     setSelectedProgramme(newValue);
-    if (newValue) {
-      setSelectedSchool("");
-    }
+    if (newValue) setSelectedSchool("");
   };
 
   const handleDeleteCourse = async (courseId) => {
@@ -82,7 +87,6 @@ function CourseContent() {
       });
 
       if (res.ok) {
-        alert("Course deleted successfully");
         fetchData(); // Refresh list
       } else {
         const data = await res.json();
@@ -94,59 +98,85 @@ function CourseContent() {
     }
   };
 
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading courses...</div>;
+
   return (
-    <>
-      <div className="pt-25 text-5xl p-6 flex flex-row justify-between mr-5 ">
-        <div className="flex flex-row justify-between gap-9">
-          All Courses
-        </div>
-        <button className="text-xl px-2 border-2 border-black rounded-xl p-2 text-white font-bold bg-black" onClick={() => { setopen(true) }}>+Add Courses</button>
+    <div className="flex flex-col gap-8">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col gap-2"
+        >
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">All Courses</h1>
+          <p className="text-gray-500">Manage your institution's course catalog.</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => setopen(true)}
+            sx={{
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 600,
+              bgcolor: 'black',
+              '&:hover': { bgcolor: '#333' },
+              boxShadow: '0 4px 14px 0 rgba(0,0,0,0.1)'
+            }}
+          >
+            Add Course
+          </Button>
+        </motion.div>
         <CreateCourseModal open={open} onClose={() => setopen(false)} />
       </div>
 
-      {/* === FILTER MENU BOXES === */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, pl: 4 }}>
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="school-filter-label">Filter by School</InputLabel>
+      {/* FILTER BAR */}
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4">
+        <FormControl size="small" sx={{ minWidth: 240 }}>
+          <InputLabel>Filter by School</InputLabel>
           <Select
-            labelId="school-filter-label"
             value={selectedSchool}
             label="Filter by School"
             onChange={handleSchoolChange}
             disabled={Boolean(selectedProgramme)}
+            sx={{ borderRadius: '10px' }}
           >
-            <MenuItem value="">
-              <em>All Schools</em>
-            </MenuItem>
+            <MenuItem value=""><em>All Schools</em></MenuItem>
             {schoolOptions.map((school) => (
               <MenuItem key={school} value={school}>{school}</MenuItem>
             ))}
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="programme-filter-label">Filter by Programme</InputLabel>
+        <FormControl size="small" sx={{ minWidth: 240 }}>
+          <InputLabel>Filter by Programme</InputLabel>
           <Select
-            labelId="programme-filter-label"
             value={selectedProgramme}
             label="Filter by Programme"
             onChange={handleProgrammeChange}
             disabled={Boolean(selectedSchool)}
+            sx={{ borderRadius: '10px' }}
           >
-            <MenuItem value="">
-              <em>All Programmes</em>
-            </MenuItem>
+            <MenuItem value=""><em>All Programmes</em></MenuItem>
             {programmeOptions.map((prog) => (
               <MenuItem key={prog} value={prog}>{prog}</MenuItem>
             ))}
           </Select>
         </FormControl>
-      </Box>
+      </div>
 
-      <div className="w-full text-black p-5">
-        <Grid container spacing={3}>
-          {filteredCourses.map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.course_id || item.id} sx={{ display: 'flex' }}>
+      {/* GRID LAYOUT */}
+      <AnimatePresence>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredCourses.map((item, index) => (
+            <motion.div
+              key={item.course_id || item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
               <AdminCoursecard
                 id={item.course_id}
                 courseId={item.course_code}
@@ -155,11 +185,17 @@ function CourseContent() {
                 topicCount={item.topic_count}
                 onDelete={handleDeleteCourse}
               />
-            </Grid>
+            </motion.div>
           ))}
-        </Grid>
-      </div>
-    </>
+        </div>
+      </AnimatePresence>
+
+      {filteredCourses.length === 0 && !loading && (
+        <div className="text-center py-24 text-gray-400">
+          No courses found matching your filters.
+        </div>
+      )}
+    </div>
   );
 }
 

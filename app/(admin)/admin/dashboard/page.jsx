@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Card,
   Grid,
   IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Avatar,
   Table,
   TableBody,
   TableCell,
@@ -12,99 +26,94 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography,
-  TextField,
-  Box,
   InputAdornment,
-  Button
+  Tooltip
 } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { Edit, Delete, Search, Sort, Add, Link as LinkIcon } from "@mui/icons-material";
-import CreateUser from "../../../client/components/admin/CreateUser";
-import AssignCourse from "../../../client/components/admin/AssignCourse";
+import {
+  PersonAdd,
+  Delete,
+  School,
+  Edit,
+  Search,
+  FilterList,
+  Sort,
+  MoreVert,
+  AdminPanelSettings,
+  SupervisedUserCircle,
+  AccountCircle
+} from "@mui/icons-material";
+import { cn } from "@/lib/utils";
+
+// --- COCKPIT COMPONENTS ---
+
+const CockpitStatsCard = ({ label, value, color, icon: Icon, delay }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, delay: delay }}
+      className={`relative overflow-hidden bg-white rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
+      style={{ borderLeftColor: color }}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-1">
+          <span className="text-3xl font-bold text-gray-800 tracking-tight leading-none">
+            {value}
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            {label}
+          </span>
+        </div>
+        <div className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-gray-100 group-hover:text-gray-600 transition-colors">
+          {Icon && <Icon />}
+        </div>
+      </div>
+      {/* Background Decoration */}
+      <div
+        className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full opacity-10 transition-transform group-hover:scale-110"
+        style={{ backgroundColor: color }}
+      />
+    </motion.div>
+  );
+};
 
 const AdminDash = () => {
   const router = useRouter();
   const [stats, setStats] = useState({
     totalUsers: 0,
-    teachers: 0,
-    editors: 0,
-    schools: 0,
-    programs: 0,
-    topics: 0
+    totalTeachers: 0,
+    totalEditors: 0,
+    totalPrograms: 0,
+    totalTopics: 0
   });
-  const [open, setOpen] = useState(false);
-  const [openAssign, setOpenAssign] = useState(false);
-  const [teachersList, setTeachersList] = useState([]);
-  const [filteredTeachers, setFilteredTeachers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openUserModal, setOpenUserModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    role: "student"
+  });
+  const [openAssignModal, setOpenAssignModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
 
-  // Fetch data for dashboard + teachers table
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/dashboard");
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if (!res.ok) throw new Error("Failed to fetch dashboard data");
       const data = await res.json();
-
-      console.log("Dashboard data received:", data);
-
-      if (data.stats) {
-        setStats(data.stats);
-      }
-      if (data.teachers) {
-        setTeachersList(data.teachers);
-        setFilteredTeachers(data.teachers);
-      }
-      setError(null);
+      setStats(data.stats);
+      setUsers(data.users);
     } catch (err) {
-      console.error("Error fetching dashboard:", err);
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Search functionality
-  const handleSearchChange = (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    const filtered = teachersList.filter((teacher) =>
-      (teacher.name || '').toLowerCase().includes(query) ||
-      (teacher.email || '').toLowerCase().includes(query) ||
-      (teacher.role || '').toLowerCase().includes(query)
-    );
-
-    setFilteredTeachers(filtered);
-  };
-
-  // Sort functionality
-  const handleSort = () => {
-    const sorted = [...filteredTeachers].sort((a, b) =>
-      (a.name || '').localeCompare(b.name || '')
-    );
-    setFilteredTeachers(sorted);
-  };
-
-  const handleDeleteUser = async (id) => {
-    if (!confirm("Are you sure you want to delete this user? This cannot be undone.")) return;
-
-    try {
-      const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        alert("User deleted");
-        fetchDashboardData();
-      } else {
-        alert("Failed to delete user");
-      }
-    } catch (e) {
-      console.error(e);
-      alert("Error deleting user");
     }
   };
 
@@ -112,275 +121,279 @@ const AdminDash = () => {
     fetchDashboardData();
   }, []);
 
+  const handleCreateUser = async () => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser)
+      });
+      if (res.ok) {
+        setOpenUserModal(false);
+        fetchDashboardData();
+        setNewUser({ firstName: "", lastName: "", email: "", password: "", role: "student" });
+      } else {
+        alert("Failed to create user");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+      if (res.ok) fetchDashboardData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateRole = async (userId, newRole) => {
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) fetchDashboardData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    setSortConfig({ key, direction });
+  };
+
+  const sortedUsers = [...users].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const filteredUsers = sortedUsers.filter(user =>
+    user.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>;
+  if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
+
   return (
-    <>
-      <h2 className="pt-20 pl-20 text-4xl font-bold">Admin Dashboard</h2>
+    <div className="flex flex-col gap-8">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col gap-2"
+        >
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Admin Cockpit</h1>
+          <p className="text-gray-500">System overview and user management.</p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+          <Button
+            variant="contained"
+            startIcon={<PersonAdd />}
+            onClick={() => setOpenUserModal(true)}
+            sx={{
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 600,
+              boxShadow: '0 4px 14px 0 rgba(0,0,0,0.1)',
+              bgcolor: 'black',
+              '&:hover': { bgcolor: '#333' }
+            }}
+          >
+            New User
+          </Button>
+        </motion.div>
+      </div>
 
-      {error && (
-        <div className="pt-4 pl-20 text-red-500">
-          Error loading dashboard: {error}
-        </div>
-      )}
+      {/* STATS GRID */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <CockpitStatsCard label="Total Users" value={stats.totalUsers} color="#3b82f6" icon={AccountCircle} delay={0.1} />
+        <CockpitStatsCard label="Teachers" value={stats.totalTeachers} color="#10b981" icon={School} delay={0.2} />
+        <CockpitStatsCard label="Editors" value={stats.totalEditors} color="#f59e0b" icon={Edit} delay={0.3} />
+        <CockpitStatsCard label="Programs" value={stats.totalPrograms} color="#8b5cf6" icon={AdminPanelSettings} delay={0.4} />
+        <CockpitStatsCard label="Topics" value={stats.totalTopics} color="#ec4899" icon={SupervisedUserCircle} delay={0.5} />
+      </div>
 
-      {loading ? (
-        <div className="pt-8 pl-20">Loading dashboard...</div>
-      ) : (
-        <>
-          {/* DASHBOARD CARDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pt-8 px-20">
-            {[
-              { label: "Total Users", value: stats.totalUsers, bg: "rgba(59,130,246,0.1)", color: "#1d4ed8", borderColor: "#3b82f6" },
-              { label: "Teachers", value: stats.teachers, bg: "rgba(34,197,94,0.1)", color: "#15803d", borderColor: "#22c55e" },
-              { label: "Total Editors", value: stats.editors, bg: "rgba(251,146,60,0.1)", color: "#c2410c", borderColor: "#fb923c" },
-              { label: "Total Programs", value: stats.programs, bg: "rgba(168,85,247,0.1)", color: "#7c2d12", borderColor: "#a855f7", link: "/admin/programs" },
-              { label: "Total Topics", value: stats.topics, bg: "rgba(6,182,212,0.1)", color: "#0e7490", borderColor: "#06b6d4" },
-            ].map((item, index) => (
-              <div key={index}>
-                <Card
-                  onClick={() => item.link && router.push(item.link)}
-                  sx={{
-                    p: 3,
-                    cursor: item.link ? 'pointer' : 'default',
-
-                    border: `2px solid ${item.borderColor}`,
-                    borderRadius: "16px",
-                    background: `linear-gradient(135deg, ${item.bg} 0%, rgba(255,255,255,0.9) 100%)`,
-                    height: "100%",
-                    minHeight: "140px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    "&:hover": {
-                      transform: "translateY(-4px)",
-                      boxShadow: "0 8px 24px rgba(0,0,0,0.12)"
-                    }
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: item.color,
-                      fontWeight: 600,
-                      textAlign: "center",
-                      fontSize: "1rem",
-                      mb: 1
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      color: "#000",
-                      fontWeight: 700,
-                      fontSize: "2.5rem"
-                    }}
-                  >
-                    {item.value || 0}
-                  </Typography>
-                </Card>
-              </div>
-            ))}
+      {/* USERS TABLE SECTION */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
+      >
+        {/* Table Header / Toolbar */}
+        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 className="text-xl font-bold text-gray-800">User Directory</h2>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <TextField
+              size="small"
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><Search className="text-gray-400" /></InputAdornment>,
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#f9fafb' },
+                width: '100%',
+                maxWidth: '300px'
+              }}
+            />
           </div>
+        </div>
 
-          {/* TEACHERS TABLE */}
-          <Box sx={{ mx: 20, mt: 8 }}>
-            {/* HEADER WITH TITLE AND ADD BUTTONS */}
-            <Box sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 3
-            }}>
-              <Typography variant="h4" sx={{ fontWeight: 600, color: "#374151" }}>
-                Users List
-              </Typography>
-
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button
-                  startIcon={<LinkIcon />}
-                  onClick={() => setOpenAssign(true)}
-                  sx={{
-                    backgroundColor: "#fff",
-                    color: "#000",
-                    border: "1px solid #e5e7eb",
-                    px: 3,
-                    py: 1.5,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    "&:hover": {
-                      backgroundColor: "#f9fafb",
-                    }
-                  }}
+        {/* Table */}
+        <TableContainer>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow sx={{ bgcolor: '#f9fafb' }}>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>User</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Role</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280', textAlign: 'right' }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUsers.map((user) => (
+                <TableRow
+                  key={user.id}
+                  sx={{ '&:hover': { bgcolor: '#f3f4f6' }, transition: 'background-color 0.2s' }}
                 >
-                  Assign Course
-                </Button>
-                <Button
-                  startIcon={<Add />}
-                  onClick={() => setOpen(true)}
-                  sx={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    px: 3,
-                    py: 1.5,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    "&:hover": {
-                      backgroundColor: "#374151",
-                    }
-                  }}
-                >
-                  Add User
-                </Button>
-              </Box>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar sx={{ bgcolor: '#e5e7eb', color: '#374151', width: 32, height: 32, fontSize: '0.875rem' }}>
+                        {user.first_name[0]}
+                      </Avatar>
+                      <span className="font-semibold text-gray-800">{user.first_name} {user.last_name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-gray-600">{user.email}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={user.role}
+                      size="small"
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        bgcolor: user.role === 'admin' ? '#dbeafe' : user.role === 'teacher' ? '#dcfce7' : user.role === 'editor' ? '#ffedd5' : '#f3f4f6',
+                        color: user.role === 'admin' ? '#1e40af' : user.role === 'teacher' ? '#166534' : user.role === 'editor' ? '#9a3412' : '#374151'
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell align="right">
+                    <div className="flex items-center justify-end gap-2">
+                      {user.role !== 'teacher' && (
+                        <Tooltip title="Make Teacher">
+                          <IconButton size="small" onClick={() => handleUpdateRole(user.id, 'teacher')} sx={{ color: '#10b981' }}>
+                            <School fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {user.role !== 'editor' && (
+                        <Tooltip title="Make Editor">
+                          <IconButton size="small" onClick={() => handleUpdateRole(user.id, 'editor')} sx={{ color: '#f59e0b' }}>
+                            <Edit fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {user.role !== 'admin' && (
+                        <Tooltip title="Delete User">
+                          <IconButton size="small" onClick={() => handleDeleteUser(user.id)} sx={{ color: '#ef4444' }}>
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredUsers.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} align="center" sx={{ py: 8, color: '#9ca3af' }}>
+                    No users found matching your search.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </motion.div>
 
-              <CreateUser open={open} onClose={() => { setOpen(false); fetchDashboardData(); }} />
-              <AssignCourse open={openAssign} onClose={() => setOpenAssign(false)} />
-            </Box>
-
-            {/* TABLE CONTAINER WITH SEARCH */}
-            <Paper sx={{
-              p: 3,
-              borderRadius: "16px",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-              border: "1px solid rgba(0,0,0,0.05)"
-            }}>
-              {/* SEARCH BAR */}
-              <Box sx={{
-                display: "flex",
-
-                alignItems: "center",
-                gap: 2,
-                mb: 3,
-                pb: 2,
-                borderBottom: "1px solid rgba(0,0,0,0.1)"
-              }}>
-                <TextField
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    width: 300,
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "12px",
-                    }
-                  }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search sx={{ color: "#6b7280" }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <IconButton
-                  onClick={handleSort}
-                  sx={{
-                    backgroundColor: "#f3f4f6",
-                    "&:hover": { backgroundColor: "#e5e7eb" },
-                    borderRadius: "12px"
-                  }}
-                >
-                  <Sort />
-                </IconButton>
-              </Box>
-
-              {/* TABLE WITH SCROLL */}
-              <TableContainer sx={{
-                maxHeight: 500,
-                overflow: 'auto',
-                '&::-webkit-scrollbar': {
-                  width: '8px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  backgroundColor: '#f1f1f1',
-                  borderRadius: '4px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#c1c1c1',
-                  borderRadius: '4px',
-                  '&:hover': {
-                    backgroundColor: '#a8a8a8',
-                  },
-                },
-              }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "#f9fafb" }}>
-                      <TableCell sx={{ fontWeight: 600, position: 'sticky', top: 0, backgroundColor: "#f9fafb", zIndex: 1 }}>ID</TableCell>
-                      <TableCell sx={{ fontWeight: 600, position: 'sticky', top: 0, backgroundColor: "#f9fafb", zIndex: 1 }}>Name</TableCell>
-                      <TableCell sx={{ fontWeight: 600, position: 'sticky', top: 0, backgroundColor: "#f9fafb", zIndex: 1 }}>Email</TableCell>
-                      <TableCell sx={{ fontWeight: 600, position: 'sticky', top: 0, backgroundColor: "#f9fafb", zIndex: 1 }}>Role</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 600, position: 'sticky', top: 0, backgroundColor: "#f9fafb", zIndex: 1 }}>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {filteredTeachers.length > 0 ? (
-                      filteredTeachers.map((teacher) => (
-                        <TableRow
-                          key={teacher.id}
-                          sx={{
-                            "&:hover": { backgroundColor: "#f9fafb" },
-                            transition: "background-color 0.2s ease"
-                          }}
-                        >
-                          <TableCell>{teacher.id}</TableCell>
-                          <TableCell>{teacher.name || 'N/A'}</TableCell>
-                          <TableCell>{teacher.email || 'N/A'}</TableCell>
-                          <TableCell>
-                            <span style={{
-                              padding: "4px 12px",
-                              borderRadius: "20px",
-                              backgroundColor: teacher.role === 'teacher' ? "#dcfce7" : "#f3f4f6",
-                              color: teacher.role === 'teacher' ? "#166534" : "#374151",
-                              fontSize: "0.875rem",
-                              fontWeight: 500
-                            }}>
-                              {teacher.role || 'user'}
-                            </span>
-                          </TableCell>
-
-                          <TableCell align="right">
-                            <div className="flex gap-1 justify-end">
-                              <IconButton
-                                color="error"
-                                size="small"
-                                onClick={() => handleDeleteUser(teacher.id)}
-                                sx={{
-                                  "&:hover": { backgroundColor: "rgba(211, 47, 47, 0.1)" }
-                                }}
-                              >
-                                <Delete fontSize="small" />
-                              </IconButton>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
-                          <Typography variant="body1" color="text.secondary">
-                            {searchQuery ? `No users found matching "${searchQuery}"` : "No teachers found"}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </Box>
-        </>
-      )}
-    </>
+      {/* CREATE USER MODAL */}
+      <Dialog open={openUserModal} onClose={() => setOpenUserModal(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '20px' } }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>Add New User</DialogTitle>
+        <DialogContent>
+          <div className="flex flex-col gap-4 mt-2">
+            <div className="flex gap-4">
+              <TextField
+                label="First Name"
+                fullWidth
+                value={newUser.firstName}
+                onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              />
+              <TextField
+                label="Last Name"
+                fullWidth
+                value={newUser.lastName}
+                onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+              />
+            </div>
+            <TextField
+              label="Email"
+              fullWidth
+              type="email"
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+            <TextField
+              label="Password"
+              fullWidth
+              type="password"
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+            <FormControl fullWidth>
+              <InputLabel>Role</InputLabel>
+              <Select
+                value={newUser.role}
+                label="Role"
+                onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                sx={{ borderRadius: '12px' }}
+              >
+                <MenuItem value="student">Student</MenuItem>
+                <MenuItem value="teacher">Teacher</MenuItem>
+                <MenuItem value="editor">Editor</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setOpenUserModal(false)} sx={{ color: 'gray' }}>Cancel</Button>
+          <Button
+            onClick={handleCreateUser}
+            variant="contained"
+            sx={{ borderRadius: '10px', bgcolor: 'black', '&:hover': { bgcolor: '#333' } }}
+          >
+            Create User
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 

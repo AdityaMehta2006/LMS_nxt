@@ -2,81 +2,44 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-    Card,
-    Grid,
-    IconButton,
-    Paper,
-    Typography,
-    Box,
-    LinearProgress,
-    Chip,
     Accordion,
     AccordionSummary,
     AccordionDetails,
+    Typography,
+    Box,
+    Chip,
     Button,
+    Grid,
     Tooltip
 } from "@mui/material";
-import { Edit, Visibility, ExpandMore, PlayCircle, CheckCircle } from "@mui/icons-material";
+import { ExpandMore, PlayCircle, CheckCircle, Visibility } from "@mui/icons-material";
 import ReviewDialogue from "../../../client/components/ReviewDialogue";
+import { cn } from "@/lib/utils";
 
-// HemisphereProgress component
-// HemisphereProgress component
-const HemisphereProgress = ({ value, color = "#3b82f6", displayValue }) => {
-    const radius = 45;
-    const stroke = 10;
-    const normalizedRadius = radius - stroke * 0.5;
-    const circumference = Math.PI * normalizedRadius;
-    const strokeDashoffset = circumference - (value / 100) * circumference;
+// --- ZEN COMPONENTS ---
 
-    // Viewport dimensions
-    const width = 140;
-    const height = 75;
-    const centerX = width / 2;
-    const centerY = height - 10;
-
-    // Arc path points
-    const startX = centerX - normalizedRadius;
-    const endX = centerX + normalizedRadius;
-    const d = `M ${startX} ${centerY} A ${normalizedRadius} ${normalizedRadius} 0 0 1 ${endX} ${centerY}`;
-
+const ZenStatsCard = ({ label, value, color, delay }) => {
     return (
-        <Box sx={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mt: 1 }}>
-            <svg height={height} width={width} viewBox={`0 0 ${width} ${height}`}>
-                {/* Background */}
-                <path
-                    d={d}
-                    fill="none"
-                    stroke="#f3f4f6"
-                    strokeWidth={stroke}
-                    strokeLinecap="round"
-                />
-                {/* Progress */}
-                <path
-                    d={d}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth={stroke}
-                    strokeDasharray={`${circumference} ${circumference}`}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)" }}
-                />
-            </svg>
-            <Box
-                sx={{
-                    position: "absolute",
-                    bottom: 12,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    textAlign: "center"
-                }}
-            >
-                <Typography variant="h4" component="div" sx={{ fontWeight: 800, color: color, fontSize: "2rem", lineHeight: 1 }}>
-                    {displayValue}
-                </Typography>
-            </Box>
-        </Box>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: delay }}
+            className="relative overflow-hidden bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 group"
+        >
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-[${color}]/5 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-[${color}]/10`} />
+
+            <div className="relative z-10 flex flex-col items-center justify-center h-full gap-2">
+                <span className="text-4xl font-bold text-gray-800 tracking-tight group-hover:scale-110 transition-transform duration-300">
+                    {value}
+                </span>
+                <span className="text-sm font-medium text-gray-500 uppercase tracking-widest text-center">
+                    {label}
+                </span>
+                <div style={{ backgroundColor: color }} className="h-1 w-12 rounded-full mt-2 opacity-50 group-hover:w-24 transition-all duration-300" />
+            </div>
+        </motion.div>
     );
 };
 
@@ -96,56 +59,29 @@ const TeacherDash = () => {
     const [currentTopic, setCurrentTopic] = useState(null);
     const [canApprove, setCanApprove] = useState(false);
 
-    // Workflow steps for progress bar
-    const workflowSteps = [
-        { id: 'Planned', label: 'Planned', color: '#64748b' },
-        { id: 'Scripted', label: 'Scripted', color: '#3b82f6' },
-        { id: 'Editing', label: 'Editing', color: '#f59e0b' },
-        { id: 'Post-Editing', label: 'Post-Editing', color: '#f59e0b' },
-        { id: 'Ready_for_Video_Prep', label: 'Ready for Video', color: '#10b981' },
-        { id: 'Under_Review', label: 'Under Review', color: '#8b5cf6' },
-        { id: 'Published', label: 'Published', color: '#22c55e' }
-    ];
-
-    // Filter topics to show only those in "Under_Review" status
-    const reviewTopics = topicsForReview.filter(topic => topic.workflow_status === 'Under_Review');
-
-    // Calculate progress percentage based on workflow status
-    const getWorkflowProgress = (status) => {
-        const stepIndex = workflowSteps.findIndex(step => step.id === status);
-        return stepIndex >= 0 ? ((stepIndex + 1) / workflowSteps.length) * 100 : 0;
-    };
-
-    // Get color for current workflow status
+    // Workflow status colors
     const getStatusColor = (status) => {
-        const step = workflowSteps.find(step => step.id === status);
-        return step ? step.color : '#64748b';
+        const colors = {
+            'Planned': '#64748b',
+            'Scripted': '#3b82f6',
+            'Editing': '#f59e0b',
+            'Post-Editing': '#f59e0b',
+            'Ready_for_Video_Prep': '#10b981',
+            'Under_Review': '#8b5cf6',
+            'Published': '#22c55e'
+        };
+        return colors[status] || '#64748b';
     };
 
-    // Calculate dynamic percentages for progress
-    const getProgressValue = (current, total) => {
-        if (total === 0) return 0;
-        return Math.round((current / total) * 100);
-    };
-
-    // Fetch data for dashboard
     const fetchDashboardData = async () => {
         try {
             setLoading(true);
             const res = await fetch("/api/teacher/dashboard");
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const data = await res.json();
 
-            console.log("Teacher dashboard data received:", data);
-
-            if (data.stats) {
-                setStats(data.stats);
-            }
-            if (data.topicsForReview) {
-                setTopicsForReview(data.topicsForReview);
-            }
+            if (data.stats) setStats(data.stats);
+            if (data.topicsForReview) setTopicsForReview(data.topicsForReview);
             if (data.canApprove !== undefined) setCanApprove(data.canApprove);
             setError(null);
         } catch (err) {
@@ -156,41 +92,23 @@ const TeacherDash = () => {
         }
     };
 
-    // Handle opening review modal
     const handleOpenReviewModal = (topic) => {
-        setCurrentTopic({
-            ...topic,
-            name: topic.topic_title, // Map for ReviewDialogue
-            id: topic.content_id
-        });
+        setCurrentTopic({ ...topic, name: topic.topic_title, id: topic.content_id });
         setOpenReviewModal(true);
     };
 
-    // Handle approve topic
     const handleApproveTopic = async (topicId) => {
         try {
             const res = await fetch(`/api/topics/update-status`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    topicId,
-                    newStatus: "Approved"
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ topicId, newStatus: "Approved" }),
             });
-
-            if (!res.ok) {
-                throw new Error("Failed to approve topic");
-            }
-
-            // Close modal and refresh data
+            if (!res.ok) throw new Error("Failed to approve topic");
             setOpenReviewModal(false);
             setCurrentTopic(null);
             fetchDashboardData();
-
         } catch (error) {
-            console.error("Error approving topic:", error);
             alert(`Error approving topic: ${error.message}`);
         }
     };
@@ -202,12 +120,8 @@ const TeacherDash = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ topicId, feedback }),
             });
-
-            if (res.ok) {
-                fetchDashboardData(); // Refresh to show updated status
-            } else {
-                alert("Failed to submit feedback");
-            }
+            if (res.ok) fetchDashboardData();
+            else alert("Failed to submit feedback");
         } catch (error) {
             console.error("Error submitting feedback:", error);
         }
@@ -217,459 +131,167 @@ const TeacherDash = () => {
         fetchDashboardData();
     }, []);
 
+    const reviewTopics = topicsForReview.filter(topic => topic.workflow_status === 'Under_Review');
+
+    if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>;
+    if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
+
     return (
-        <>
-            <h2 className="pt-20 pl-20 text-4xl font-bold">Teacher Dashboard</h2>
+        <div className="flex flex-col gap-8">
+            {/* HEADER */}
+            <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col gap-2"
+            >
+                <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Overview</h1>
+                <p className="text-gray-500">Welcome back, here's what's happening with your courses.</p>
+            </motion.div>
 
-            {error && (
-                <div className="pt-4 pl-20 text-red-500">
-                    Error loading dashboard: {error}
+            {/* STATS GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <ZenStatsCard label="Total Topics" value={stats.totalTopics} color="#3b82f6" delay={0.1} />
+                <ZenStatsCard label="Total Units" value={stats.totalUnits} color="#22c55e" delay={0.2} />
+                <ZenStatsCard label="Review Pending" value={stats.videosToReview} color="#fb923c" delay={0.3} />
+                <ZenStatsCard label="Published" value={stats.videosPublished} color="#a855f7" delay={0.4} />
+            </div>
+
+            {/* REVIEW SECTION */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mt-4"
+            >
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
+                        Videos for Review
+                        {reviewTopics.length > 0 && (
+                            <span className="bg-violet-100 text-violet-700 text-xs font-bold px-2 py-1 rounded-full">
+                                {reviewTopics.length}
+                            </span>
+                        )}
+                    </h2>
                 </div>
-            )}
 
-            {loading ? (
-                <div className="pt-8 pl-20">Loading dashboard...</div>
-            ) : (
-                <>
-                    {/* DASHBOARD CARDS */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-8 px-20">
-                        {[
-                            {
-                                label: "Total Topics",
-                                value: stats.totalTopics,
-                                progress: getProgressValue(stats.totalTopics, Math.max(stats.totalTopics, 10)),
-                                color: "#3b82f6"
-                            },
-                            {
-                                label: "Total Units",
-                                value: stats.totalUnits,
-                                progress: getProgressValue(stats.totalUnits, Math.max(stats.totalUnits, 5)),
-                                color: "#22c55e"
-                            },
-                            {
-                                label: "Videos to Review",
-                                value: stats.videosToReview,
-                                progress: getProgressValue(stats.videosToReview, Math.max(stats.totalTopics, 1)),
-                                color: "#fb923c"
-                            },
-                            {
-                                label: "Videos Published",
-                                value: stats.videosPublished,
-                                progress: getProgressValue(stats.videosPublished, Math.max(stats.totalTopics, 1)),
-                                color: "#a855f7"
-                            },
-                        ].map((item, index) => (
-                            <div key={index}>
-                                <Card
-                                    sx={{
-                                        borderRadius: "24px",
-                                        boxShadow: "0 10px 30px -10px rgba(0,0,0,0.05)",
-                                        border: `1px solid ${item.color}`,
-                                        height: "100%",
-                                        p: 3,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        transition: "transform 0.2s",
-                                        "&:hover": { transform: "translateY(-4px)" }
-                                    }}
+                <div className="flex flex-col gap-4">
+                    <AnimatePresence>
+                        {reviewTopics.length > 0 ? (
+                            reviewTopics.map((topic, index) => (
+                                <motion.div
+                                    key={topic.content_id}
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3 }}
                                 >
-                                    <HemisphereProgress value={item.progress} color={item.color} displayValue={item.value} />
-                                    <Typography variant="subtitle1" sx={{ color: "#6b7280", fontWeight: 600, mt: 1 }}>
-                                        {item.label}
-                                    </Typography>
-                                </Card>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* TOPICS FOR REVIEW SECTION */}
-                    <Box sx={{ mx: 20, mt: 8 }}>
-                        <Box sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 3
-                        }}>
-                            <Typography variant="h4" sx={{ fontWeight: 600, color: "#374151" }}>
-                                Videos for Review
-                            </Typography>
-                            <Chip
-                                label={`${reviewTopics.length} Pending`}
-                                sx={{
-                                    backgroundColor: "#8b5cf6",
-                                    color: "white",
-                                    fontWeight: 600
-                                }}
-                            />
-                        </Box>
-
-                        {/* ACCORDION TOPIC LAYOUT */}
-                        <Paper sx={{
-                            p: 3,
-                            borderRadius: "16px",
-                            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                            border: "1px solid rgba(0,0,0,0.05)"
-                        }}>
-                            {reviewTopics.length > 0 ? (
-                                <div className="space-y-4">
-                                    {reviewTopics.map((topic, index) => (
-                                        <Accordion
-                                            key={topic.content_id}
-                                            expanded={expandedTopic === topic.content_id}
-                                            onChange={() =>
-                                                setExpandedTopic(expandedTopic === topic.content_id ? null : topic.content_id)
-                                            }
+                                    <Accordion
+                                        expanded={expandedTopic === topic.content_id}
+                                        onChange={() => setExpandedTopic(expandedTopic === topic.content_id ? null : topic.content_id)}
+                                        sx={{
+                                            border: 'none',
+                                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                                            borderRadius: '16px !important',
+                                            '&:before': { display: 'none' },
+                                            overflow: 'hidden',
+                                            backgroundColor: 'white'
+                                        }}
+                                    >
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMore className="text-gray-400" />}
                                             sx={{
-                                                border: `2px solid ${getStatusColor(topic.workflow_status)}`,
-                                                borderRadius: "12px !important",
-                                                "&:before": { display: "none" },
-                                                "&.Mui-expanded": { margin: "0 0 16px 0" }
+                                                padding: '16px 24px',
+                                                '&.Mui-expanded': { minHeight: 'auto' }
                                             }}
                                         >
-                                            <AccordionSummary
-                                                expandIcon={<ExpandMore />}
-                                                sx={{
-                                                    backgroundColor: `${getStatusColor(topic.workflow_status)}08`,
-                                                    borderRadius: "12px",
-                                                    minHeight: "80px",
-                                                    "&.Mui-expanded": {
-                                                        borderRadius: "12px 12px 0 0",
-                                                        minHeight: "80px"
-                                                    },
-                                                    "& .MuiAccordionSummary-content": {
-                                                        margin: "16px 0",
-                                                        "&.Mui-expanded": { margin: "16px 0" }
-                                                    }
-                                                }}
-                                            >
-                                                <Box sx={{
-                                                    display: "flex",
-                                                    justifyContent: "space-between",
-                                                    width: "100%",
-                                                    alignItems: "center",
-                                                    pr: 2
-                                                }}>
-                                                    {/* Left Side - Main Info */}
-                                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1 }}>
-                                                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                                            <Chip
-                                                                label={`#${index + 1}`}
-                                                                size="small"
-                                                                sx={{
-                                                                    backgroundColor: getStatusColor(topic.workflow_status),
-                                                                    color: "white",
-                                                                    fontWeight: 700,
-                                                                    fontSize: "0.75rem",
-                                                                    height: "24px"
-                                                                }}
-                                                            />
-                                                            <Typography
-                                                                variant="h6"
-                                                                sx={{
-                                                                    fontWeight: 700,
-                                                                    color: "#1f2937",
-                                                                    fontSize: "1.1rem"
-                                                                }}
-                                                            >
-                                                                {topic.topic_title}
-                                                            </Typography>
-                                                        </Box>
+                                            <div className="flex items-center justify-between w-full pr-4">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-xs font-bold text-violet-500 tracking-wider uppercase">
+                                                        {topic.course_title}
+                                                    </span>
+                                                    <span className="text-lg font-semibold text-gray-800">
+                                                        {topic.topic_title}
+                                                    </span>
+                                                </div>
+                                                <Chip
+                                                    label="Ready for Review"
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: '#f3e8ff',
+                                                        color: '#7c3aed',
+                                                        fontWeight: 600
+                                                    }}
+                                                />
+                                            </div>
+                                        </AccordionSummary>
 
-                                                        {/* Course & Unit Info */}
-                                                        <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: 4 }}>
-                                                            <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                                                                <strong>Course:</strong> {topic.course_title}
-                                                            </Typography>
-                                                            <Typography variant="body2" sx={{ color: "#9ca3af" }}>•</Typography>
-                                                            <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                                                                <strong>Unit:</strong> {topic.unit_title}
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-
-                                                    {/* Right Side - Status & Duration */}
-                                                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                                        <Chip
-                                                            label="Ready for Review"
-                                                            size="medium"
-                                                            sx={{
-                                                                backgroundColor: `${getStatusColor(topic.workflow_status)}15`,
-                                                                color: getStatusColor(topic.workflow_status),
-                                                                fontWeight: 600,
-                                                                fontSize: "0.8rem",
-                                                                border: `1px solid ${getStatusColor(topic.workflow_status)}40`
-                                                            }}
-                                                        />
+                                        <AccordionDetails sx={{ padding: '0 24px 24px 24px', backgroundColor: 'white' }}>
+                                            <div className="pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div className="space-y-4">
+                                                    <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Topic Details</h4>
+                                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                                        <div className="text-gray-500">Program</div>
+                                                        <div className="font-medium">{topic.program_name}</div>
+                                                        <div className="text-gray-500">Unit</div>
+                                                        <div className="font-medium">{topic.unit_title}</div>
                                                         {topic.estimated_duration_min && (
-                                                            <Chip
-                                                                label={`${topic.estimated_duration_min}m`}
-                                                                size="small"
-                                                                sx={{
-                                                                    backgroundColor: "#f3f4f6",
-                                                                    color: "#374151",
-                                                                    fontWeight: 500,
-                                                                    fontSize: "0.75rem"
-                                                                }}
-                                                            />
+                                                            <>
+                                                                <div className="text-gray-500">Duration</div>
+                                                                <div className="font-medium">{topic.estimated_duration_min} min</div>
+                                                            </>
                                                         )}
-                                                    </Box>
-                                                </Box>
-                                            </AccordionSummary>
+                                                    </div>
+                                                </div>
 
-                                            <AccordionDetails sx={{
-                                                backgroundColor: "#fafbfc",
-                                                borderRadius: "0 0 12px 12px",
-                                                borderTop: "1px solid #e5e7eb"
-                                            }}>
-                                                <Box sx={{ p: 3 }}>
-                                                    {/* Topic Details */}
-                                                    <Grid container spacing={4}>
-                                                        <Grid item xs={12} md={6}>
-                                                            <Box sx={{
-                                                                p: 3,
-                                                                backgroundColor: "white",
-                                                                borderRadius: "12px",
-                                                                border: "1px solid #e5e7eb"
-                                                            }}>
-                                                                <Typography variant="h6" sx={{
-                                                                    mb: 3,
-                                                                    color: "#111827",
-                                                                    fontWeight: 700,
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    gap: 1
-                                                                }}>
-                                                                    📋 Topic Details
-                                                                </Typography>
-                                                                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                                                        <Typography variant="body2" sx={{ color: "#6b7280", fontWeight: 500 }}>
-                                                                            Program
-                                                                        </Typography>
-                                                                        <Typography variant="body2" sx={{ color: "#111827", fontWeight: 600 }}>
-                                                                            {topic.program_name}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                                                        <Typography variant="body2" sx={{ color: "#6b7280", fontWeight: 500 }}>
-                                                                            Course
-                                                                        </Typography>
-                                                                        <Typography variant="body2" sx={{ color: "#111827", fontWeight: 600 }}>
-                                                                            {topic.course_title}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                                                        <Typography variant="body2" sx={{ color: "#6b7280", fontWeight: 500 }}>
-                                                                            Unit
-                                                                        </Typography>
-                                                                        <Typography variant="body2" sx={{ color: "#111827", fontWeight: 600 }}>
-                                                                            {topic.unit_title}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                    {topic.estimated_duration_min && (
-                                                                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                                                            <Typography variant="body2" sx={{ color: "#6b7280", fontWeight: 500 }}>
-                                                                                Duration
-                                                                            </Typography>
-                                                                            <Typography variant="body2" sx={{ color: "#111827", fontWeight: 600 }}>
-                                                                                {topic.estimated_duration_min} minutes
-                                                                            </Typography>
-                                                                        </Box>
-                                                                    )}
-                                                                </Box>
-                                                            </Box>
-                                                        </Grid>
+                                                <div className="flex flex-col justify-end gap-3">
+                                                    <div className="flex gap-3 justify-end">
+                                                        <Button
+                                                            variant="outlined"
+                                                            startIcon={<Visibility />}
+                                                            onClick={() => router.push(`/teachers/courses/${topic.course_id}`)}
+                                                            sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', color: '#64748b' }}
+                                                        >
+                                                            View
+                                                        </Button>
+                                                        <Button
+                                                            variant="contained"
+                                                            startIcon={<PlayCircle />}
+                                                            onClick={() => handleOpenReviewModal(topic)}
+                                                            sx={{
+                                                                borderRadius: '12px',
+                                                                backgroundColor: '#8b5cf6',
+                                                                '&:hover': { backgroundColor: '#7c3aed' },
+                                                                boxShadow: 'none'
+                                                            }}
+                                                        >
+                                                            Review Video
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-200">
+                                <span className="text-gray-400">No videos pending review. Good job!</span>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </motion.div>
 
-                                                        <Grid item xs={12} md={6}>
-                                                            {/* Review Status */}
-                                                            <Box sx={{
-                                                                p: 3,
-                                                                backgroundColor: "white",
-                                                                borderRadius: "12px",
-                                                                border: "1px solid #e5e7eb"
-                                                            }}>
-                                                                <Typography variant="h6" sx={{
-                                                                    mb: 3,
-                                                                    color: "#111827",
-                                                                    fontWeight: 700,
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    gap: 1
-                                                                }}>
-                                                                    📊 Review Status
-                                                                </Typography>
-
-                                                                {/* Progress Circle */}
-                                                                <Box sx={{
-                                                                    display: "flex",
-                                                                    flexDirection: "column",
-                                                                    alignItems: "center",
-                                                                    mb: 3
-                                                                }}>
-                                                                    <Box sx={{
-                                                                        position: "relative",
-                                                                        width: 80,
-                                                                        height: 80,
-                                                                        mb: 2
-                                                                    }}>
-                                                                        <svg width="80" height="80" viewBox="0 0 80 80">
-                                                                            <circle
-                                                                                cx="40"
-                                                                                cy="40"
-                                                                                r="36"
-                                                                                stroke="#e5e7eb"
-                                                                                strokeWidth="8"
-                                                                                fill="none"
-                                                                            />
-                                                                            <circle
-                                                                                cx="40"
-                                                                                cy="40"
-                                                                                r="36"
-                                                                                stroke={getStatusColor(topic.workflow_status)}
-                                                                                strokeWidth="8"
-                                                                                fill="none"
-                                                                                strokeDasharray={`${2 * Math.PI * 36}`}
-                                                                                strokeDashoffset={`${2 * Math.PI * 36 * (1 - getWorkflowProgress(topic.workflow_status) / 100)}`}
-                                                                                strokeLinecap="round"
-                                                                                transform="rotate(-90 40 40)"
-                                                                            />
-                                                                        </svg>
-                                                                        <Box sx={{
-                                                                            position: "absolute",
-                                                                            top: "50%",
-                                                                            left: "50%",
-                                                                            transform: "translate(-50%, -50%)",
-                                                                            textAlign: "center"
-                                                                        }}>
-                                                                            <Typography
-                                                                                variant="h6"
-                                                                                sx={{
-                                                                                    fontWeight: 700,
-                                                                                    color: getStatusColor(topic.workflow_status),
-                                                                                    fontSize: "1rem"
-                                                                                }}
-                                                                            >
-                                                                                {Math.round(getWorkflowProgress(topic.workflow_status))}%
-                                                                            </Typography>
-                                                                        </Box>
-                                                                    </Box>
-
-                                                                    <Typography variant="body1" sx={{
-                                                                        fontWeight: 600,
-                                                                        color: "#111827",
-                                                                        textAlign: "center"
-                                                                    }}>
-                                                                        Under Review
-                                                                    </Typography>
-                                                                </Box>
-                                                            </Box>
-                                                        </Grid>
-                                                    </Grid>
-
-                                                    {/* Action Buttons */}
-                                                    <Box sx={{
-                                                        display: "flex",
-                                                        justifyContent: "center",
-                                                        gap: 3,
-                                                        pt: 4,
-                                                        mt: 3,
-                                                        borderTop: "1px solid #e5e7eb"
-                                                    }}>
-                                                        <Tooltip title="View Topic Details" arrow>
-                                                            <Button
-                                                                variant="outlined"
-                                                                startIcon={<Visibility />}
-                                                                sx={{
-                                                                    borderColor: "#3b82f6",
-                                                                    color: "#3b82f6",
-                                                                    "&:hover": {
-                                                                        backgroundColor: "#3b82f615",
-                                                                        borderColor: "#2563eb"
-                                                                    },
-                                                                    borderRadius: "12px",
-                                                                    fontWeight: 600,
-                                                                    px: 3,
-                                                                    py: 1.5
-                                                                }}
-                                                                onClick={() => router.push(`/teachers/courses/${topic.course_id}`)}
-                                                            >
-                                                                View Details
-                                                            </Button>
-                                                        </Tooltip>
-
-                                                        <Tooltip title="Play & Review Video" arrow>
-                                                            <Button
-                                                                variant="outlined"
-                                                                startIcon={<PlayCircle />}
-                                                                sx={{
-                                                                    borderColor: "#8b5cf6",
-                                                                    color: "#8b5cf6",
-                                                                    "&:hover": {
-                                                                        backgroundColor: "#8b5cf615",
-                                                                        borderColor: "#7c3aed"
-                                                                    },
-                                                                    borderRadius: "12px",
-                                                                    fontWeight: 600,
-                                                                    px: 3,
-                                                                    py: 1.5
-                                                                }}
-                                                                onClick={() => handleOpenReviewModal(topic)}
-                                                            >
-                                                                Play Video
-                                                            </Button>
-                                                        </Tooltip>
-
-                                                        <Tooltip title="Review & Approve" arrow>
-                                                            <Button
-                                                                variant="contained"
-                                                                startIcon={<CheckCircle />}
-                                                                onClick={() => handleOpenReviewModal(topic)}
-                                                                sx={{
-                                                                    backgroundColor: "#10b981",
-                                                                    "&:hover": { backgroundColor: "#059669" },
-                                                                    fontWeight: 600,
-                                                                    borderRadius: "12px",
-                                                                    px: 4,
-                                                                    py: 1.5,
-                                                                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)"
-                                                                }}
-                                                            >
-                                                                Approve & Publish
-                                                            </Button>
-                                                        </Tooltip>
-                                                    </Box>
-                                                </Box>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    ))}
-                                </div>
-                            ) : (
-                                <Box sx={{ textAlign: "center", py: 8 }}>
-                                    <Typography variant="h6" sx={{ color: "#6b7280", mb: 1 }}>
-                                        No videos pending review
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: "#9ca3af" }}>
-                                        Videos ready for review will appear here
-                                    </Typography>
-                                </Box>
-                            )}
-                        </Paper>
-                    </Box>
-
-                    {/* REVIEW VIDEO MODAL */}
-                    <ReviewDialogue
-                        open={openReviewModal}
-                        onClose={() => setOpenReviewModal(false)}
-                        topic={currentTopic}
-                        onFeedbackSubmit={handleFeedbackSubmit}
-                        onApprove={handleApproveTopic}
-                        canApprove={canApprove}
-                    />
-                </>
-            )}
-        </>
+            {/* REVIEW MODAL */}
+            <ReviewDialogue
+                open={openReviewModal}
+                onClose={() => setOpenReviewModal(false)}
+                topic={currentTopic}
+                onFeedbackSubmit={handleFeedbackSubmit}
+                onApprove={handleApproveTopic}
+                canApprove={canApprove}
+            />
+        </div>
     );
 };
 

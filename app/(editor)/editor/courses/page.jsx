@@ -1,58 +1,61 @@
-"use client"; // Step 1: Make it a Client Component
+"use client";
+
 import React, { useState, useEffect, Suspense } from "react";
-import { Grid, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import EditorCoursecard from "@/app/client/components/EditorCoursecard";
 
 function CourseContent() {
   const searchParams = useSearchParams();
-  // --- Step 2: Add state for courses and filters ---
+  // --- Data state ---
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [schoolOptions, setSchoolOptions] = useState([]);
   const [programmeOptions, setProgrammeOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Filter state
   const [selectedSchool, setSelectedSchool] = useState("");
   const [selectedProgramme, setSelectedProgramme] = useState("");
 
-  // --- Step 3: Fetch data on the client side ---
+  // --- Fetch data ---
   useEffect(() => {
     async function fetchData() {
-      // Client-side fetch can use a relative URL
-      const response = await fetch("/api/editor/courses");
-      if (!response.ok) {
-        console.error("Failed to fetch data");
-        return;
-      }
+      try {
+        setLoading(true);
+        const response = await fetch("/api/editor/courses");
+        if (!response.ok) {
+          console.error("Failed to fetch data");
+          return;
+        }
 
-      const data = await response.json();
-      console.log("API Response:", data); // Debug log
-      const mydata = data.courses || [];
-      console.log("Courses data:", mydata); // Debug log
-      setCourses(mydata);
+        const data = await response.json();
+        const mydata = data.courses || [];
+        setCourses(mydata);
 
-      const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
-      const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
-      console.log("Schools extracted:", schools); // Debug log
-      console.log("Programmes extracted:", programmes); // Debug log
-      setSchoolOptions(schools);
-      setProgrammeOptions(programmes);
+        const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
+        const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
+        setSchoolOptions(schools);
+        setProgrammeOptions(programmes);
 
-      // Check for program query parameter
-      const programParam = searchParams.get("program");
-      if (programParam) {
-        setSelectedProgramme(programParam);
-        // The filtering effect will handle setFilteredCourses based on this
-      } else {
-        setFilteredCourses(mydata); // Initially, all courses are shown if no filter
+        const programParam = searchParams.get("program");
+        if (programParam) {
+          setSelectedProgramme(programParam);
+        } else {
+          setFilteredCourses(mydata);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchData();
-  }, [searchParams]); // Re-run if searchParams change (though unlikely component mount issues, good practice)
+  }, [searchParams]);
 
-  // --- Step 4: Apply filters when state changes ---
+  // --- Apply filters ---
   useEffect(() => {
     let tempCourses = [...courses];
 
@@ -66,90 +69,96 @@ function CourseContent() {
     setFilteredCourses(tempCourses);
   }, [selectedSchool, selectedProgramme, courses]);
 
-  // --- Handlers for the dropdowns ---
+  // --- Handlers ---
   const handleSchoolChange = (event) => {
     const newValue = event.target.value;
     setSelectedSchool(newValue);
-    // Clear program filter when school is selected
-    if (newValue) {
-      setSelectedProgramme("");
-    }
+    if (newValue) setSelectedProgramme("");
   };
 
   const handleProgrammeChange = (event) => {
     const newValue = event.target.value;
     setSelectedProgramme(newValue);
-    // Clear school filter when program is selected
-    if (newValue) {
-      setSelectedSchool("");
-    }
+    if (newValue) setSelectedSchool("");
   };
 
+  if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading courses...</div>;
 
   return (
-    <>
-      <div className="pt-25 text-5xl p-6 flex flex-row justify-between mr-5 ">
-        My Courses
-      </div>
+    <div className="flex flex-col gap-8">
+      {/* HEADER */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex flex-col gap-2"
+      >
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">My Courses</h1>
+        <p className="text-gray-500">Access and edit your assigned course materials.</p>
+      </motion.div>
 
-      {/* === NEW FILTER MENU BOXES === */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, pl: 3 }}>
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="school-filter-label">Filter by School</InputLabel>
+      {/* FILTER BAR */}
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4">
+        <FormControl size="small" sx={{ minWidth: 240 }}>
+          <InputLabel>Filter by School</InputLabel>
           <Select
-            labelId="school-filter-label"
             value={selectedSchool}
             label="Filter by School"
             onChange={handleSchoolChange}
-            disabled={Boolean(selectedProgramme)} // Disable when programme is selected
+            disabled={Boolean(selectedProgramme)}
+            sx={{ borderRadius: '10px' }}
           >
-            <MenuItem value="">
-              <em>All Schools</em>
-            </MenuItem>
+            <MenuItem value=""><em>All Schools</em></MenuItem>
             {schoolOptions.map((school) => (
               <MenuItem key={school} value={school}>{school}</MenuItem>
             ))}
           </Select>
         </FormControl>
 
-        <FormControl sx={{ minWidth: 240 }}>
-          <InputLabel id="programme-filter-label">Filter by Programme</InputLabel>
+        <FormControl size="small" sx={{ minWidth: 240 }}>
+          <InputLabel>Filter by Programme</InputLabel>
           <Select
-            labelId="programme-filter-label"
             value={selectedProgramme}
             label="Filter by Programme"
             onChange={handleProgrammeChange}
-            disabled={Boolean(selectedSchool)} // Disable when school is selected
+            disabled={Boolean(selectedSchool)}
+            sx={{ borderRadius: '10px' }}
           >
-            <MenuItem value="">
-              <em>All Programmes</em>
-            </MenuItem>
+            <MenuItem value=""><em>All Programmes</em></MenuItem>
             {programmeOptions.map((prog) => (
               <MenuItem key={prog} value={prog}>{prog}</MenuItem>
             ))}
           </Select>
         </FormControl>
-      </Box>
-      {/* ================================ */}
+      </div>
 
-      <div className="w-full text-black p-5">
-        <Grid container spacing={3}>
-          {/* Step 5: Map over the filteredCourses state */}
-          {filteredCourses.map((item) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.course_id}>
+      {/* GRID LAYOUT */}
+      <AnimatePresence>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredCourses.map((item, index) => (
+            <motion.div
+              key={item.course_id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
               <EditorCoursecard
                 id={item.course_id}
                 courseId={item.course_code}
                 Course={item.name}
                 unitCount={item.unit_count}
                 topicCount={item.topic_count}
-
               />
-            </Grid>
+            </motion.div>
           ))}
-        </Grid>
-      </div>
-    </>
+        </div>
+      </AnimatePresence>
+
+      {filteredCourses.length === 0 && !loading && (
+        <div className="text-center py-24 text-gray-400">
+          No courses found matching your filters.
+        </div>
+      )}
+    </div>
   );
 }
 
