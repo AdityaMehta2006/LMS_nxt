@@ -11,7 +11,8 @@ import {
     ResponsiveContainer,
     PieChart,
     Pie,
-    Cell
+    Cell,
+    Legend
 } from "recharts";
 import { motion } from "framer-motion";
 
@@ -67,8 +68,8 @@ const AnalyticsCharts = ({ analytics }) => {
                                 data={analytics}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
+                                innerRadius="60%"
+                                outerRadius="80%"
                                 paddingAngle={5}
                                 dataKey="courses"
                             >
@@ -77,6 +78,7 @@ const AnalyticsCharts = ({ analytics }) => {
                                 ))}
                             </Pie>
                             <Tooltip />
+                            <Legend />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>

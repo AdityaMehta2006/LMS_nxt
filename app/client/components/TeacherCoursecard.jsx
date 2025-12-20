@@ -15,48 +15,40 @@ const TeacherCoursecard = ({ id, courseId, Course, unitCount, topicCount }) => {
       className={cn(
         "group cursor-pointer relative flex flex-col justify-between",
         "h-full w-full p-5 rounded-2xl",
-        "bg-white border border-gray-100",
-        "shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]", // Extremely subtle, premium shadow
-        "transition-all duration-300 ease-out",
-        "hover:-translate-y-1" // Slight lift on hover
+        "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700",
+        "shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
       )}
     >
-      {/* Decorative Top Accent (Minimal) */}
-      <div className="absolute top-5 right-5 h-2 w-2 rounded-full bg-violet-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Decorative Top Accent */}
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl" />
 
       {/* HEADER */}
-      <div>
-        <span className="inline-block px-2 py-0.5 rounded-md bg-gray-50 text-xs font-medium text-gray-500 mb-3 border border-gray-100">
+      <div className="pt-2">
+        <span className="inline-block px-2.5 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-xs font-semibold text-violet-600 dark:text-violet-300 mb-3 border border-violet-100 dark:border-violet-800">
           {courseId}
         </span>
-        <h2 className="text-xl font-semibold text-gray-900 leading-tight group-hover:text-violet-600 transition-colors line-clamp-2">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-tight group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
           {Course}
         </h2>
       </div>
 
       {/* STATS ROW */}
-      <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-4">
-        <div className="flex gap-6">
-          {/* Units */}
-          <div className="flex items-center gap-2 group/stat">
-            <div className="p-1.5 rounded-md bg-transparent group-hover/stat:bg-blue-50 transition-colors">
-              <Layers size={16} className="text-gray-400 group-hover/stat:text-blue-500 transition-colors" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Units</span>
-              <span className="text-sm font-medium text-gray-700">{unitCount || 0}</span>
-            </div>
+      <div className="mt-8 flex items-center gap-4 pt-4 border-t border-gray-50 dark:border-gray-700/50">
+        {/* Units */}
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/30 group-hover:bg-violet-50 dark:group-hover:bg-violet-900/20 transition-colors">
+          <Layers size={18} className="text-gray-400 dark:text-gray-500 group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors" />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-none">{unitCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 leading-none mt-0.5">Units</span>
           </div>
+        </div>
 
-          {/* Topics */}
-          <div className="flex items-center gap-2 group/stat">
-            <div className="p-1.5 rounded-md bg-transparent group-hover/stat:bg-pink-50 transition-colors">
-              <BookOpen size={16} className="text-gray-400 group-hover/stat:text-pink-500 transition-colors" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Topics</span>
-              <span className="text-sm font-medium text-gray-700">{topicCount || 0}</span>
-            </div>
+        {/* Topics */}
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/30 group-hover:bg-fuchsia-50 dark:group-hover:bg-fuchsia-900/20 transition-colors">
+          <BookOpen size={18} className="text-gray-400 dark:text-gray-500 group-hover:text-fuchsia-500 dark:group-hover:text-fuchsia-400 transition-colors" />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-none">{topicCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 leading-none mt-0.5">Topics</span>
           </div>
         </div>
       </div>

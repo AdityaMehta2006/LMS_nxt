@@ -1,7 +1,8 @@
 "use client";
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 const theme = createTheme({
   palette: {
@@ -17,9 +18,11 @@ const theme = createTheme({
 
 export function Providers({ children }) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
+    </NextThemesProvider>
   );
 }

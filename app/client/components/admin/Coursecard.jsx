@@ -9,69 +9,59 @@ import { BookOpen, Layers, Trash2 } from "lucide-react";
 const AdminCoursecard = ({ id, courseId, Course, unitCount, topicCount }) => {
   const router = useRouter();
   return (
-    <Card className="h-full w-full">
-      <div className="bg-white border-l-4 border-t-2 border-r-2 border-b-2 border-r-gray-200 border-t-gray-200 border-b-gray-200 border-blue-500 h-full min-h-[350px] text-black p-4 rounded-lg flex flex-col w-full">
+    <div
+      className="group relative h-full w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col"
+      onClick={() => router.push(`/admin/courses/${id}`)}
+    >
+      {/* Top Border Accent */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-500" />
 
-        {/* CONTENT */}
-        <div className="grow">
-          <div className="flex justify-between items-start">
-            <h2 className="text-2xl mt-2 text-black line-clamp-3 flex-1">{Course}</h2>
-            <button
-              className="ml-2 mt-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Add delete functionality here
-                console.log('Delete course:', id);
-              }}
-            >
-              <Trash2 size={20} />
-            </button>
+      <div className="p-5 flex flex-col h-full">
+
+        {/* HEADER */}
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-1">
+            <span className="inline-block px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-xs font-semibold text-blue-600 dark:text-blue-300 mb-2 border border-blue-100 dark:border-blue-800">
+              {courseId}
+            </span>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {Course}
+            </h2>
           </div>
-          <h3 className="font-bold text-blue-500 border-2 w-max p-1 rounded-3xl my-2 bg-blue-200/40 border-blue-500 text-sm">{courseId}</h3>
-          {/* Cards */}
-          <div className="mt-4">
-            <div className="flex gap-3 w-full">
-              {/* Units Card */}
-              <div
-                className="flex-1 rounded-xl p-3 border text-gray-700 h-16 flex flex-col justify-center"
-                style={{
-                  background: "#EEF7FF",
-                  borderColor: "#CDE5FF",
-                }}
-              >
-                <div className="flex items-center gap-2 text-xs font-medium">
-                  <Layers size={14} />
-                  Units
-                </div>
-                <p className="text-xl font-semibold">{unitCount || 0}</p>
-              </div>
-
-              {/* Topics Card */}
-              <div
-                className="flex-1 rounded-xl p-3 border text-gray-700 h-16 flex flex-col justify-center"
-                style={{
-                  background: "#FFF4FA",
-                  borderColor: "#FFD9EC",
-                }}
-              >
-                <div className="flex items-center gap-2 text-xs font-medium">
-                  <BookOpen size={14} />
-                  Topics
-                </div>
-                <p className="text-xl font-semibold">{topicCount || 0}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* BUTTON AREA (Right Bottom) */}
-        <div className="flex justify-end mt-4">
-          <button className="rounded-lg text-white bg-gray-800 py-2 px-2 w-30 text-center" onClick={() => router.push(`/admin/courses/${id}`)}>
-            Learn More
+          <button
+            className="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full transition-all z-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Add delete functionality here
+              console.log('Delete course:', id);
+            }}
+            title="Delete Course"
+          >
+            <Trash2 size={18} />
           </button>
         </div>
+
+        {/* SPACER */}
+        <div className="flex-grow" />
+
+        {/* STATS */}
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          {/* Units */}
+          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center group/stat hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+            <Layers size={18} className="text-gray-400 dark:text-gray-500 mb-1 group-hover/stat:text-blue-500 dark:group-hover/stat:text-blue-400" />
+            <span className="text-lg font-bold text-gray-800 dark:text-gray-200">{unitCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">Units</span>
+          </div>
+
+          {/* Topics */}
+          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center group/stat hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors">
+            <BookOpen size={18} className="text-gray-400 dark:text-gray-500 mb-1 group-hover/stat:text-pink-500 dark:group-hover/stat:text-pink-400" />
+            <span className="text-lg font-bold text-gray-800 dark:text-gray-200">{topicCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">Topics</span>
+          </div>
+        </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
