@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useCallback } from "react";
 import { Grid, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Masonry } from "@mui/lab";
 import { useSearchParams } from "next/navigation";
@@ -21,26 +21,27 @@ function CourseContent() {
   const [selectedProgramme, setSelectedProgramme] = useState(searchParams.get("program") || "");
 
   // Fetch data
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("/api/teacher/display");
-      if (!response.ok) {
-        console.error("Failed to fetch data");
-        return;
-      }
-
-      const data = await response.json();
-      const mydata = data.courses || [];
-      setCourses(mydata);
-      // setFilteredCourses(mydata); // filtering effect will handle this
-
-      const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
-      const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
-      setSchoolOptions(schools);
-      setProgrammeOptions(programmes);
+  const fetchData = useCallback(async () => {
+    const response = await fetch("/api/teacher/display");
+    if (!response.ok) {
+      console.error("Failed to fetch data");
+      return;
     }
+
+    const data = await response.json();
+    const mydata = data.courses || [];
+    setCourses(mydata);
+    // setFilteredCourses(mydata); // filtering effect will handle this
+
+    const schools = [...new Set(mydata.map(item => item.department).filter(Boolean))];
+    const programmes = [...new Set(mydata.map(item => item.program).filter(Boolean))];
+    setSchoolOptions(schools);
+    setProgrammeOptions(programmes);
+  }, []); // Empty dependency array as it doesn't depend on external values
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // Apply filters
   useEffect(() => {
@@ -69,6 +70,27 @@ function CourseContent() {
     setSelectedProgramme(newValue);
     if (newValue) {
       setSelectedSchool("");
+    }
+  };
+
+  const handleDeleteCourse = async (courseId) => {
+    if (!window.confirm("Are you sure you want to delete this course? This action cannot be undone.")) return;
+
+    try {
+      const res = await fetch(`/api/admin/courses/${courseId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        alert("Course deleted successfully");
+        fetchData(); // Refresh list
+      } else {
+        const data = await res.json();
+        alert(`Failed to delete course: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      alert("An error occurred while deleting the course.");
     }
   };
 
@@ -131,6 +153,7 @@ function CourseContent() {
                 Course={item.name}
                 unitCount={item.unit_count}
                 topicCount={item.topic_count}
+                onDelete={handleDeleteCourse}
               />
             </Grid>
           ))}
