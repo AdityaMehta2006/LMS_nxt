@@ -21,7 +21,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 const AnalyticsCharts = ({ analytics }) => {
     if (!analytics || analytics.length === 0) {
         return (
-            <div className="p-8 text-center text-gray-500 bg-gray-50 rounded-3xl border border-gray-100">
+            <div className="p-8 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700">
                 No analytics data available just yet.
             </div>
         );
@@ -34,13 +34,13 @@ const AnalyticsCharts = ({ analytics }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100"
+                className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700"
             >
-                <h3 className="text-lg font-bold text-gray-800 mb-6">Course Distribution (By Program)</h3>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Course Distribution (By Program)</h3>
                 <div className="h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={analytics}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" className="dark:stroke-gray-700" />
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
                             <Tooltip
@@ -58,9 +58,9 @@ const AnalyticsCharts = ({ analytics }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100"
+                className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700"
             >
-                <h3 className="text-lg font-bold text-gray-800 mb-6">Program Composition</h3>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Program Composition</h3>
                 <div className="h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>

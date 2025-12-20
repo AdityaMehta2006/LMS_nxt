@@ -42,13 +42,16 @@ const ZenStatsCard = ({ label, value, color, bg, borderColor, delay }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: delay }}
-      className="relative overflow-hidden bg-white rounded-2xl p-6 border shadow-sm hover:shadow-md transition-all duration-300 group"
-      style={{ borderColor: borderColor }}
+      className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border shadow-sm hover:shadow-md transition-all duration-300 group"
+      style={{ borderColor: borderColor }} // Note: Handling inline border color properly in dark mode might tricky if strict colors are passed.
+    // Ideally, we should ignore inline border color in dark mode or replace it.
+    // But let's just add dark classes for now.
     >
-      <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl -mr-12 -mt-12 transition-all opacity-50" style={{ backgroundColor: bg }} />
+      {/* Decorative Blur - Adjust opacity for dark mode */}
+      <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl -mr-12 -mt-12 transition-all opacity-50 dark:opacity-30" style={{ backgroundColor: bg }} />
 
       <div className="relative z-10 flex flex-col gap-1">
-        <span className="text-3xl font-bold text-gray-800 tracking-tight">
+        <span className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
           {value}
         </span>
         <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: color }}>
@@ -197,15 +200,15 @@ const EditorDash = () => {
   if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 text-left">
       {/* HEADER */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         className="flex flex-col gap-2"
       >
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Editor Dashboard</h1>
-        <p className="text-gray-500">Manage your production pipeline and uploads.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Editor Dashboard</h1>
+        <p className="text-gray-500 dark:text-gray-400">Manage your production pipeline and uploads.</p>
       </motion.div>
 
       {/* STATS GRID */}
@@ -218,21 +221,22 @@ const EditorDash = () => {
       </div>
 
       {/* ACTION BAR */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold text-gray-800">Workspace</h2>
-          <div className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-md">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-white">Workspace</h2>
+          <div className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-bold px-2 py-1 rounded-md">
             {editingTopics.length} Active
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Status Filter</InputLabel>
+          <FormControl size="small" sx={{ minWidth: 150 }} className="dark:bg-gray-700 rounded-lg">
+            <InputLabel className={filterStatus !== "All" ? "" : "dark:text-gray-400"}>Status Filter</InputLabel>
             <Select
               value={filterStatus}
               label="Status Filter"
               onChange={(e) => setFilterStatus(e.target.value)}
               sx={{ borderRadius: '10px' }}
+              className="dark:text-white"
             >
               <MenuItem value="All">All Statuses</MenuItem>
               <MenuItem value="In Editing">In Progress</MenuItem>
@@ -246,11 +250,12 @@ const EditorDash = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
-              startAdornment: <Search sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />,
+              startAdornment: <Search sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} className="dark:text-gray-400" />,
             }}
             sx={{
               '& .MuiOutlinedInput-root': { borderRadius: '10px' }
             }}
+            className="dark:bg-gray-700 dark:text-white rounded-lg"
           />
         </div>
       </div>
@@ -275,14 +280,19 @@ const EditorDash = () => {
                     borderRadius: '12px !important',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
                     '&:before': { display: 'none' },
-                    backgroundColor: topic.review_notes ? '#fef2f2' : 'white'
+                    backgroundColor: topic.review_notes ? '#fef2f2' : 'white', // Feedback overrides everything? Or combine?
+                    // Let's handle dark mode feedback bg manually if needed
                   }}
+                  className={cn(
+                    "transition-colors",
+                    topic.review_notes ? "bg-red-50 dark:bg-red-900/10" : "bg-white dark:bg-gray-800"
+                  )}
                 >
-                  <AccordionSummary expandIcon={<ExpandMore />} sx={{ px: 3 }}>
+                  <AccordionSummary expandIcon={<ExpandMore className="dark:text-gray-400" />} sx={{ px: 3 }}>
                     <div className="flex items-center gap-4 w-full pr-4">
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-400 font-semibold uppercase">{topic.course_title}</span>
-                        <span className="text-base font-bold text-gray-800">{topic.topic_title}</span>
+                        <span className="text-base font-bold text-gray-800 dark:text-gray-100">{topic.topic_title}</span>
                       </div>
                       <div className="ml-auto flex gap-2">
                         {topic.review_notes && (
@@ -301,21 +311,21 @@ const EditorDash = () => {
                     </div>
                   </AccordionSummary>
 
-                  <AccordionDetails sx={{ px: 3, pb: 3 }}>
-                    <div className="pt-4 border-t border-gray-100 flex flex-col gap-4">
+                  <AccordionDetails sx={{ px: 3, pb: 3, backgroundColor: 'inherit' }} className="dark:text-gray-300">
+                    <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="text-sm space-y-2">
-                          <div className="flex justify-between"><span className="text-gray-500">Program:</span> <span className="font-medium">{topic.program_name}</span></div>
-                          <div className="flex justify-between"><span className="text-gray-500">Unit:</span> <span className="font-medium">{topic.unit_title}</span></div>
-                          <div className="flex justify-between"><span className="text-gray-500">Editor:</span> <span className="font-medium">{topic.assigned_editor_name || 'Unassigned'}</span></div>
-                          {topic.estimated_duration_min && <div className="flex justify-between"><span className="text-gray-500">Duration:</span> <span className="font-medium">{topic.estimated_duration_min}m</span></div>}
+                          <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Program:</span> <span className="font-medium">{topic.program_name}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Unit:</span> <span className="font-medium">{topic.unit_title}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Editor:</span> <span className="font-medium">{topic.assigned_editor_name || 'Unassigned'}</span></div>
+                          {topic.estimated_duration_min && <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Duration:</span> <span className="font-medium">{topic.estimated_duration_min}m</span></div>}
                         </div>
                         <div className="flex flex-col justify-end items-end gap-2">
                           {/* Download Buttons Row */}
                           <div className="flex gap-2">
-                            {topic.has_doc && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=doc`, '_blank')} size="small" className="bg-blue-50 text-blue-600 hover:bg-blue-100"><Description fontSize="small" /></IconButton>}
-                            {topic.has_ppt && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=ppt`, '_blank')} size="small" className="bg-orange-50 text-orange-600 hover:bg-orange-100"><Slideshow fontSize="small" /></IconButton>}
-                            {topic.has_zip && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=zip`, '_blank')} size="small" className="bg-violet-50 text-violet-600 hover:bg-violet-100"><FolderZip fontSize="small" /></IconButton>}
+                            {topic.has_doc && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=doc`, '_blank')} size="small" className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"><Description fontSize="small" /></IconButton>}
+                            {topic.has_ppt && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=ppt`, '_blank')} size="small" className="bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/50"><Slideshow fontSize="small" /></IconButton>}
+                            {topic.has_zip && <IconButton onClick={() => window.open(`/api/download-topic-material?topicId=${topic.content_id}&type=zip`, '_blank')} size="small" className="bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 hover:bg-violet-100 dark:hover:bg-violet-900/50"><FolderZip fontSize="small" /></IconButton>}
                           </div>
 
                           {/* Action Button */}
@@ -351,7 +361,7 @@ const EditorDash = () => {
                       </div>
 
                       {topic.review_notes && topic.workflow_status !== 'Approved' && (
-                        <div className="bg-red-50 p-3 rounded-lg border border-red-100 text-sm text-red-800">
+                        <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-900/30 text-sm text-red-800 dark:text-red-200">
                           <strong>Feedback:</strong> {topic.review_notes}
                         </div>
                       )}
@@ -362,7 +372,7 @@ const EditorDash = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200">
+          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
             <span className="text-gray-400 font-medium">No topics in progress</span>
           </div>
         )}

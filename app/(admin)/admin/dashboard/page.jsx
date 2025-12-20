@@ -67,19 +67,19 @@ const CockpitStatsCard = ({ label, value, color, icon: Icon, delay }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: delay }}
-      className={`relative overflow-hidden bg-white rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
+      className={`relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
       style={{ borderLeftColor: color }}
     >
       <div className="flex justify-between items-start">
         <div className="flex flex-col gap-1">
-          <span className="text-3xl font-bold text-gray-800 tracking-tight leading-none">
+          <span className="text-3xl font-bold text-gray-800 dark:text-white tracking-tight leading-none">
             {value}
           </span>
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-400">
             {label}
           </span>
         </div>
-        <div className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-gray-100 group-hover:text-gray-600 transition-colors">
+        <div className="p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-400 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-gray-700 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors">
           {Icon && <Icon />}
         </div>
       </div>
@@ -202,7 +202,7 @@ const AdminDash = () => {
   if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 text-left">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* ... (Header content) */}
@@ -211,8 +211,8 @@ const AdminDash = () => {
           animate={{ opacity: 1, x: 0 }}
           className="flex flex-col gap-2"
         >
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Admin Cockpit</h1>
-          <p className="text-gray-500">System overview and user management.</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Admin Cockpit</h1>
+          <p className="text-gray-500 dark:text-gray-400">System overview and user management.</p>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex gap-3">
           <Button
@@ -224,8 +224,10 @@ const AdminDash = () => {
               fontWeight: 600,
               borderColor: '#e5e7eb',
               color: '#374151',
+              '.dark &': { borderColor: '#4b5563', color: '#d1d5db' }, // MUI Dark Mode override attempt, better handled via theme or class
               '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' }
             }}
+            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             Manage Assignments
           </Button>
@@ -241,6 +243,7 @@ const AdminDash = () => {
               bgcolor: 'black',
               '&:hover': { bgcolor: '#333' }
             }}
+            className="dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             New User
           </Button>
@@ -264,11 +267,11 @@ const AdminDash = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
       >
         {/* Table Header / Toolbar */}
-        <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-gray-800">User Directory</h2>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">User Directory</h2>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <TextField
               size="small"
@@ -283,6 +286,7 @@ const AdminDash = () => {
                 width: '100%',
                 maxWidth: '300px'
               }}
+              className="dark:bg-gray-700 dark:text-white" // Tailwinc override for container
             />
           </div>
         </div>
@@ -291,11 +295,11 @@ const AdminDash = () => {
         <TableContainer>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f9fafb' }}>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>User</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }}>Role</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280', textAlign: 'right' }}>Actions</TableCell>
+              <TableRow sx={{ bgcolor: '#f9fafb' }} className="dark:bg-gray-900/50">
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">User</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">Email</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">Role</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280', textAlign: 'right' }} className="dark:text-gray-400">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -303,16 +307,17 @@ const AdminDash = () => {
                 <TableRow
                   key={user.id}
                   sx={{ '&:hover': { bgcolor: '#f3f4f6' }, transition: 'background-color 0.2s' }}
+                  className="dark:hover:bg-gray-700/50"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar sx={{ bgcolor: '#e5e7eb', color: '#374151', width: 32, height: 32, fontSize: '0.875rem' }}>
+                      <Avatar sx={{ bgcolor: '#e5e7eb', color: '#374151', width: 32, height: 32, fontSize: '0.875rem' }} className="dark:bg-gray-700 dark:text-gray-300">
                         {user.firstName?.[0] || '?'}
                       </Avatar>
-                      <span className="font-semibold text-gray-800">{user.firstName} {user.lastName}</span>
+                      <span className="font-semibold text-gray-800 dark:text-gray-200">{user.firstName} {user.lastName}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-600">{user.email}</TableCell>
+                  <TableCell className="text-gray-600 dark:text-gray-400">{user.email}</TableCell>
                   <TableCell>
                     <Chip
                       label={user.role}
@@ -323,6 +328,7 @@ const AdminDash = () => {
                         bgcolor: user.role === 'admin' ? '#dbeafe' : user.role === 'teacher' ? '#dcfce7' : user.role === 'editor' ? '#ffedd5' : '#f3f4f6',
                         color: user.role === 'admin' ? '#1e40af' : user.role === 'teacher' ? '#166534' : user.role === 'editor' ? '#9a3412' : '#374151'
                       }}
+                      className="dark:opacity-90"
                     />
                   </TableCell>
                   <TableCell align="right">
