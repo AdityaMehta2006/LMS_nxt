@@ -4,6 +4,9 @@ const path = require('path');
 const source = path.join(__dirname, 'prisma');
 const dest = path.join(__dirname, '.next', 'standalone', 'prisma');
 
+const sourceScripts = path.join(__dirname, 'scripts');
+const destScripts = path.join(__dirname, '.next', 'standalone', 'scripts');
+
 function copyDir(src, dest) {
     if (!fs.existsSync(dest)) {
         fs.mkdirSync(dest, { recursive: true });
@@ -27,6 +30,12 @@ if (fs.existsSync(source) && fs.existsSync(path.join(__dirname, '.next', 'standa
     console.log(`Copying Prisma folder from ${source} to ${dest}...`);
     copyDir(source, dest);
     console.log('Prisma folder copied successfully.');
+
+    if (fs.existsSync(sourceScripts)) {
+        console.log(`Copying Scripts folder from ${sourceScripts} to ${destScripts}...`);
+        copyDir(sourceScripts, destScripts);
+        console.log('Scripts folder copied successfully.');
+    }
 } else {
     // If standalone doesn't exist, maybe it's not a standalone build or build failed before this script
     console.warn('Standalone directory or Prisma folder not found. Skipping copy.');
