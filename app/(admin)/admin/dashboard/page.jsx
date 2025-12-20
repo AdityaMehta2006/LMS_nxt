@@ -61,7 +61,37 @@ const AnalyticsCharts = dynamic(
 );
 
 // --- COCKPIT COMPONENTS ---
-// ... (CockpitStatsCard remains the same)
+
+const CockpitStatsCard = ({ label, value, color, icon: Icon, delay }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, delay: delay }}
+      className={`relative overflow-hidden bg-white rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
+      style={{ borderLeftColor: color }}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-1">
+          <span className="text-3xl font-bold text-gray-800 tracking-tight leading-none">
+            {value}
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            {label}
+          </span>
+        </div>
+        <div className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-gray-100 group-hover:text-gray-600 transition-colors">
+          {Icon && <Icon />}
+        </div>
+      </div>
+      {/* Background Decoration */}
+      <div
+        className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full opacity-10 transition-transform group-hover:scale-110"
+        style={{ backgroundColor: color }}
+      />
+    </motion.div>
+  );
+};
 
 const AdminDash = () => {
   const router = useRouter();
