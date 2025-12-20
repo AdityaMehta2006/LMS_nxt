@@ -60,7 +60,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                 animate={isOpen ? "open" : "closed"}
                 variants={sidebarVariants}
                 className={cn(
-                    "fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-gray-100 shadow-xl lg:shadow-none lg:translate-x-0 lg:opacity-100 lg:static lg:block", // lg:static makes it flow normally on desktop
+                    "fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-gray-100 shadow-xl lg:shadow-none lg:!translate-x-0 lg:!opacity-100 lg:!static lg:block", // lg:static makes it flow normally on desktop
                     "flex flex-col"
                 )}
                 // On desktop, we override the motion styles via CSS (lg:static) or valid classes 
