@@ -38,7 +38,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
             )}
         >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            {!collapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+            {!collapsed && <span>{theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}</span>}
         </button>
     );
 
@@ -92,14 +92,14 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                             {isActive && (
                                 <div className={cn(
                                     "absolute inset-0 bg-gradient-to-r",
-                                    role === 'Admin' ? "from-gray-900 to-gray-800 dark:from-white dark:to-gray-200" : "from-violet-600 to-indigo-600"
+                                    role === 'Admin' ? "from-gray-900 to-gray-800 dark:from-gray-700 dark:to-gray-600" : "from-violet-600 to-indigo-600"
                                 )} />
                             )}
 
-                            {/* Active Text (Inverse for Admin Dark Mode if using white bg) */}
-                            {/* NOTE: Changing inner text color if active and dark mode */}
-                            <span className={cn("relative z-10 flex items-center gap-3", isActive && role === 'Admin' && "dark:text-black")}>
-                                {Icon && <Icon size={20} className={isActive ? "text-white dark:text-inherit" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"} />}
+                            {/* Active Text (Inverse for Admin Dark Mode if using white bg - REMOVED) */}
+                            {/* NOTE: Changed to keep white text for consistency in dark mode */}
+                            <span className={cn("relative z-10 flex items-center gap-3", isActive && "text-white")}>
+                                {Icon && <Icon size={20} className={isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"} />}
                                 {!collapsed && <span>{link.label}</span>}
                             </span>
 

@@ -93,9 +93,12 @@ const VideoUploadModal = ({ open, onClose, topic, onUploadComplete }) => {
             borderRadius: 3,
             textAlign: "center",
             borderStyle: "dashed",
-            borderColor: "#9ca3af",
-            background: "#f9fafb",
+            borderColor: "divider", // use theme divider
+            bgcolor: "background.default", // user theme default/paper
             cursor: "pointer",
+            "&:hover": {
+              bgcolor: "action.hover"
+            }
           }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -119,7 +122,7 @@ const VideoUploadModal = ({ open, onClose, topic, onUploadComplete }) => {
 
         {/* SHOW SELECTED FILE */}
         {file && (
-          <Box mt={3} p={2} border="1px solid #e5e7eb" borderRadius={2}>
+          <Box mt={3} p={2} border="1px solid" borderColor="divider" borderRadius={2}>
             <Typography variant="subtitle1" fontWeight={600}>
               Selected File:
             </Typography>

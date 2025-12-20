@@ -128,8 +128,8 @@ const ScriptDialogue = ({ open, onClose, topic, onUploadSuccess }) => {
             disabled
             sx={{
               "& .MuiInputBase-input.Mui-disabled": {
-                "-webkit-text-fill-color": "#000",
-                opacity: 1,
+                "-webkit-text-fill-color": "inherit", // allow theme color inheritance
+                opacity: 0.7,
                 cursor: "default",
               },
               "& .MuiInputBase-root": {
@@ -164,8 +164,8 @@ const ScriptDialogue = ({ open, onClose, topic, onUploadSuccess }) => {
             disabled
             sx={{
               "& .MuiInputBase-input.Mui-disabled": {
-                "-webkit-text-fill-color": "#000",
-                opacity: 1,
+                "-webkit-text-fill-color": "inherit",
+                opacity: 0.7,
                 cursor: "default",
               },
               "& .MuiInputBase-root": {
@@ -202,8 +202,8 @@ const ScriptDialogue = ({ open, onClose, topic, onUploadSuccess }) => {
               fullWidth
               sx={{
                 "& .MuiInputBase-input.Mui-disabled": {
-                  "-webkit-text-fill-color": "#000",
-                  opacity: 1,
+                  "-webkit-text-fill-color": "inherit",
+                  opacity: 0.7,
                   cursor: "default",
                 },
                 "& .MuiInputBase-root": {
