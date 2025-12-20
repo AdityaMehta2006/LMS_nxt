@@ -23,9 +23,37 @@ export async function GET() {
     const editors = editorRoleIds.length > 0 ? await prisma.user.count({ where: { roleId: { in: editorRoleIds } } }) : 0;
 
     const schools = await prisma.school.count();
-    const programs = await prisma.program.count();
-    const topics = await prisma.contentItem.count();
+    const totalPrograms = await prisma.program.count();
+    const totalTopics = await prisma.contentItem.count();
     const topicsPublished = await prisma.contentItem.count({ where: { workflowStatus: 'Published' } });
+
+    // Analytics Data: Program-wise stats
+    const programsData = await prisma.program.findMany({
+      include: {
+        _count: {
+          select: { courses: true }
+        },
+        courses: {
+          select: {
+            _count: {
+              select: { sections: true } // Proxy for activity
+            }
+          }
+        }
+      }
+    });
+
+    const analytics = programsData.map(p => {
+      // Abbreviate name: Get first letters of each word
+      const abbr = p.programName.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 4);
+      return {
+        name: abbr,
+        fullName: p.programName,
+        courses: p._count.courses,
+        // A simple metric: sum of sections or similar. For topics, we'd need deeper nesting or a separate query. 
+        // Keeping it simple for speed: Courses count is a good metric.
+      };
+    });
 
     const usersRaw = await prisma.user.findMany({
       include: {
@@ -48,13 +76,14 @@ export async function GET() {
     return NextResponse.json({
       stats: {
         totalUsers,
-        teachers,
-        editors,
-        schools,
-        programs,
-        topics,
+        totalTeachers: teachers,
+        totalEditors: editors,
+        totalSchools: schools,
+        totalPrograms,
+        totalTopics,
         topicsPublished
       },
+      analytics,
       users: usersFormatted,
     });
   } catch (error) {

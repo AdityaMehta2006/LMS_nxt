@@ -161,9 +161,9 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                 {/* Collapse Toggle */}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="absolute top-4 right-[-12px] z-50 bg-white border border-gray-200 rounded-full p-1 shadow-sm hover:shadow-md transition-all hover:bg-gray-50 text-gray-500"
+                    className="absolute top-4 right-[-14px] z-50 bg-white border border-gray-200 rounded-full p-2 shadow-md hover:shadow-lg transition-all hover:bg-gray-50 text-gray-600"
                 >
-                    {isCollapsed ? <Menu size={14} /> : <Menu size={14} />}
+                    {isCollapsed ? <Menu size={20} /> : <Menu size={20} />}
                 </button>
 
                 <NavContent collapsed={isCollapsed} />

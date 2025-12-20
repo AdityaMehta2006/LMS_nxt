@@ -53,8 +53,10 @@ export async function POST(req) {
         }
 
         const allowedRoles = ['teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher'];
-        if (!allowedRoles.includes(user.role?.roleName.toLowerCase())) {
-            return new NextResponse("Invalid user role for assignment. Only Teachers, TAs, Editors, or Publishers can be assigned.", { status: 400 });
+        const userRole = user.role?.roleName?.toLowerCase();
+
+        if (!userRole || !allowedRoles.includes(userRole)) {
+            return new NextResponse(`Invalid user role (${user.role?.roleName}). Only Teachers, TAs, Editors, or Publishers can be assigned.`, { status: 400 });
         }
 
         // Check if assignment exists
