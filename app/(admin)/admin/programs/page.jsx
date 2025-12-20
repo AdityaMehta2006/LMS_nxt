@@ -42,8 +42,11 @@ function Programs() {
           >
             Academic Programs
           </Typography>
-          <button className="border-2 font-bold text-xl bg-black dark:bg-blue-600 dark:border-blue-600 text-white p-2 rounded-2xl hover:opacity-80 transition-opacity" onClick={() => { setopen(true) }}>
-            +Add Program
+          <button
+            className="border-2 font-bold text-xl bg-black text-white px-4 py-2 rounded-2xl hover:bg-gray-800 transition-colors dark:bg-blue-600 dark:border-blue-600 dark:hover:bg-blue-700"
+            onClick={() => { setopen(true) }}
+          >
+            + Add Program
           </button>
           <CreateProgramModal open={open} onClose={() => setopen(false)} />
         </div>

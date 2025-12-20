@@ -210,10 +210,12 @@ const AdminAssign = () => {
                                             label={assign.user?.role?.roleName || 'Unknown'}
                                             size="small"
                                             sx={{
-                                                bgcolor: assign.user?.role?.roleName === 'Teacher' ? '#dcfce7' : '#ffedd5',
-                                                color: assign.user?.role?.roleName === 'Teacher' ? '#166534' : '#9a3412',
                                                 fontWeight: 600
                                             }}
+                                            className={assign.user?.role?.roleName === 'Teacher'
+                                                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                                : "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                                            }
                                         />
                                     </TableCell>
                                     <TableCell>

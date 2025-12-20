@@ -9,7 +9,7 @@ const AdminProgramcard = ({ id, programName, programCode, schoolName }) => {
 
   return (
     <Card
-      className="h-full transition-all duration-300 hover:shadow-lg  cursor-pointer border-l-4 border-l-blue-500"
+      className="h-full transition-all duration-300 hover:shadow-lg  cursor-pointer border-l-4 border-l-blue-500 bg-white dark:bg-gray-800"
       onClick={() => {
         // Navigate to courses page with program filter
         router.push(`/admin/courses?program=${encodeURIComponent(programName)}`);

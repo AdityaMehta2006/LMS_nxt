@@ -80,7 +80,7 @@ const CreateProgramModal = ({ open, onClose }) => {
       <Box
         sx={{
           width: 500,
-          bgcolor: "background.paper",
+          bgcolor: "background.paper", // theme-aware
           borderRadius: 2,
           boxShadow: 24,
           p: 4,
