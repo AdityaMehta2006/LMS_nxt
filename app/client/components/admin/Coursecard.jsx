@@ -10,7 +10,7 @@ const AdminCoursecard = ({ id, courseId, Course, unitCount, topicCount }) => {
   const router = useRouter();
   return (
     <div
-      className="group relative h-full w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col"
+      className="group relative h-full w-full !bg-white dark:!bg-gray-800 rounded-2xl border !border-gray-200 dark:!border-gray-700 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col"
       onClick={() => router.push(`/admin/courses/${id}`)}
     >
       {/* Top Border Accent */}

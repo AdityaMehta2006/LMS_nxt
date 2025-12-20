@@ -123,7 +123,7 @@ const AnalyticsPage = () => {
                 {/* GRAPH 1: Program Comparison (Only visible when ALL selected) */}
                 {selectedProgramId === "all" && (
                     <div className="col-span-12 lg:col-span-8">
-                        <Card className="p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 h-[400px]">
+                        <Card className="p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 !bg-white dark:!bg-gray-800 h-[400px]">
                             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Course & Topic Volume by Program</h3>
                             <ResponsiveContainer width="100%" height="85%">
                                 <BarChart data={allProgramsChartData} barSize={40}>
@@ -142,7 +142,7 @@ const AnalyticsPage = () => {
 
                 {/* GRAPH 2: Status Distribution (Pie Chart) */}
                 <div className={cn("col-span-12", selectedProgramId === "all" ? "lg:col-span-4" : "lg:col-span-8 lg:col-start-3")}>
-                    <Card className="p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 h-[400px] flex flex-col">
+                    <Card className="p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 !bg-white dark:!bg-gray-800 h-[400px] flex flex-col">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2 text-center">
                             {selectedProgramId === "all" ? "Overall Topic Status" : "Topic Status Breakdown"}
                         </h3>

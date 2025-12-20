@@ -66,9 +66,11 @@ function Schools() {
                                             boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                             height: "100%",
                                             transition: "transform 0.2s",
+                                            bgcolor: 'background.paper',
+                                            border: 1,
+                                            borderColor: 'divider',
                                             "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 16px rgba(0,0,0,0.1)" }
                                         }}
-                                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
                                     >
                                         <CardContent className="flex flex-col items-center p-6 text-center gap-4">
                                             <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">
@@ -92,7 +94,7 @@ function Schools() {
                         )}
                     </div>
                 )}
-            </div>
+            </div >
         </>
     );
 }

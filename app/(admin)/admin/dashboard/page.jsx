@@ -67,7 +67,7 @@ const CockpitStatsCard = ({ label, value, color, icon: Icon, delay }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: delay }}
-      className={`relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
+      className={`relative overflow-hidden !bg-white dark:!bg-gray-800 rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
       style={{ borderLeftColor: color }}
     >
       <div className="flex justify-between items-start">
@@ -266,7 +266,7 @@ const AdminDash = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        className="!bg-white dark:!bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
       >
         {/* Table Header / Toolbar */}
         <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

@@ -130,7 +130,7 @@ const AdminAssign = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+                className="!bg-white dark:!bg-gray-800 p-6 rounded-2xl shadow-sm border !border-gray-100 dark:!border-gray-700"
             >
                 <div className="flex flex-col md:flex-row gap-4 items-end">
                     <Autocomplete

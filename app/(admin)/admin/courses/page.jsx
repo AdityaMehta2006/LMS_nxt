@@ -134,7 +134,7 @@ function CourseContent() {
       </div>
 
       {/* FILTER BAR */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col sm:flex-row gap-4">
+      <div className="!bg-white dark:!bg-gray-800 p-4 rounded-2xl border !border-gray-100 dark:!border-gray-700 shadow-sm flex flex-col sm:flex-row gap-4">
         <FormControl size="small" sx={{ minWidth: 240 }} className="dark:bg-gray-700 rounded-lg">
           <InputLabel className="dark:text-gray-300">Filter by School</InputLabel>
           <Select
