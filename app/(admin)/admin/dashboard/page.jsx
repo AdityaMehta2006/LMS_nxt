@@ -221,12 +221,8 @@ const AdminDash = () => {
               borderRadius: '12px',
               textTransform: 'none',
               fontWeight: 600,
-              borderColor: '#e5e7eb',
-              color: '#374151',
-              '.dark &': { borderColor: '#4b5563', color: '#d1d5db' },
-              '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' }
             }}
-            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 border-2 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
           >
             Manage Assignments
           </Button>
@@ -239,10 +235,8 @@ const AdminDash = () => {
               textTransform: 'none',
               fontWeight: 600,
               boxShadow: '0 4px 14px 0 rgba(0,0,0,0.1)',
-              bgcolor: 'black',
-              '&:hover': { bgcolor: '#333' }
             }}
-            className="dark:bg-blue-600 dark:hover:bg-blue-700"
+            className="bg-black hover:bg-gray-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
           >
             New User
           </Button>
@@ -281,11 +275,11 @@ const AdminDash = () => {
                 startAdornment: <InputAdornment position="start"><Search className="text-gray-400" /></InputAdornment>,
               }}
               sx={{
-                '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#f9fafb' },
+                '& .MuiOutlinedInput-root': { borderRadius: '10px' },
                 width: '100%',
                 maxWidth: '300px'
               }}
-              className="dark:bg-gray-700 dark:text-white dark:[&_.MuiOutlinedInput-notchedOutline]:border-gray-600 dark:[&_.MuiInputBase-input]:text-white"
+              className="bg-gray-50 dark:bg-gray-700 dark:text-white dark:[&_.MuiOutlinedInput-notchedOutline]:border-gray-600 dark:[&_.MuiInputBase-input]:text-white"
             />
           </div>
         </div>
@@ -294,7 +288,7 @@ const AdminDash = () => {
         <TableContainer>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f9fafb' }} className="dark:bg-gray-700/50">
+              <TableRow className="bg-gray-50 dark:bg-gray-700/50">
                 <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">User</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">Email</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">Role</TableCell>
@@ -305,12 +299,12 @@ const AdminDash = () => {
               {filteredUsers.map((user) => (
                 <TableRow
                   key={user.id}
-                  sx={{ '&:hover': { bgcolor: '#f3f4f6' }, transition: 'background-color 0.2s' }}
-                  className="dark:hover:bg-gray-700/50"
+                  sx={{ transition: 'background-color 0.2s' }}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar sx={{ bgcolor: '#e5e7eb', color: '#374151', width: 32, height: 32, fontSize: '0.875rem' }} className="dark:bg-gray-700 dark:text-gray-300">
+                      <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }} className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                         {user.firstName?.[0] || '?'}
                       </Avatar>
                       <span className="font-semibold text-gray-800 dark:text-gray-200">{user.firstName} {user.lastName}</span>
@@ -323,11 +317,15 @@ const AdminDash = () => {
                       size="small"
                       sx={{
                         fontWeight: 600,
-                        textTransform: 'uppercase',
-                        bgcolor: user.role === 'admin' ? '#dbeafe' : user.role === 'teacher' ? '#dcfce7' : user.role === 'editor' ? '#ffedd5' : '#f3f4f6',
-                        color: user.role === 'admin' ? '#1e40af' : user.role === 'teacher' ? '#166534' : user.role === 'editor' ? '#9a3412' : '#374151'
+                        textTransform: 'uppercase'
                       }}
-                      className="dark:opacity-90"
+                      className={(() => {
+                        const r = user.role?.toLowerCase();
+                        if (r === 'admin') return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+                        if (r === 'teacher') return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+                        if (r === 'editor') return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300";
+                        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+                      })()}
                     />
                   </TableCell>
                   <TableCell align="right">
