@@ -205,7 +205,6 @@ const AdminDash = () => {
     <div className="flex flex-col gap-8 text-left">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* ... (Header content) */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -224,7 +223,7 @@ const AdminDash = () => {
               fontWeight: 600,
               borderColor: '#e5e7eb',
               color: '#374151',
-              '.dark &': { borderColor: '#4b5563', color: '#d1d5db' }, // MUI Dark Mode override attempt, better handled via theme or class
+              '.dark &': { borderColor: '#4b5563', color: '#d1d5db' },
               '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' }
             }}
             className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
@@ -286,7 +285,7 @@ const AdminDash = () => {
                 width: '100%',
                 maxWidth: '300px'
               }}
-              className="dark:bg-gray-700 dark:text-white" // Tailwinc override for container
+              className="dark:bg-gray-700 dark:text-white dark:[&_.MuiOutlinedInput-notchedOutline]:border-gray-600 dark:[&_.MuiInputBase-input]:text-white"
             />
           </div>
         </div>
@@ -295,11 +294,11 @@ const AdminDash = () => {
         <TableContainer>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
-              <TableRow sx={{ bgcolor: '#f9fafb' }} className="dark:bg-gray-900/50">
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">User</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">Email</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-400">Role</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#6b7280', textAlign: 'right' }} className="dark:text-gray-400">Actions</TableCell>
+              <TableRow sx={{ bgcolor: '#f9fafb' }} className="dark:bg-gray-700/50">
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">User</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">Email</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280' }} className="dark:text-gray-300">Role</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#6b7280', textAlign: 'right' }} className="dark:text-gray-300">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -333,6 +332,10 @@ const AdminDash = () => {
                   </TableCell>
                   <TableCell align="right">
                     <div className="flex items-center justify-end gap-2">
+                      <IconButton size="small" className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                        <MoreVert fontSize="small" />
+                      </IconButton>
+                      {/* Action buttons logic reused */}
                       {user.role !== 'teacher' && (
                         <Tooltip title="Make Teacher">
                           <IconButton size="small" onClick={() => handleUpdateRole(user.id, 'teacher')} sx={{ color: '#10b981' }}>
@@ -376,45 +379,14 @@ const AdminDash = () => {
         <DialogContent>
           <div className="flex flex-col gap-4 mt-2">
             <div className="flex gap-4">
-              <TextField
-                label="First Name"
-                fullWidth
-                value={newUser.firstName}
-                onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
-              <TextField
-                label="Last Name"
-                fullWidth
-                value={newUser.lastName}
-                onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
+              <TextField label="First Name" fullWidth value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+              <TextField label="Last Name" fullWidth value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
             </div>
-            <TextField
-              label="Email"
-              fullWidth
-              type="email"
-              value={newUser.email}
-              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-            />
-            <TextField
-              label="Password"
-              fullWidth
-              type="password"
-              value={newUser.password}
-              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-            />
+            <TextField label="Email" fullWidth type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
+            <TextField label="Password" fullWidth type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }} />
             <FormControl fullWidth>
               <InputLabel>Role</InputLabel>
-              <Select
-                value={newUser.role}
-                label="Role"
-                onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                sx={{ borderRadius: '12px' }}
-              >
+              <Select value={newUser.role} label="Role" onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} sx={{ borderRadius: '12px' }}>
                 <MenuItem value="teacher">Teacher</MenuItem>
                 <MenuItem value="editor">Editor</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
@@ -426,13 +398,7 @@ const AdminDash = () => {
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button onClick={() => setOpenUserModal(false)} sx={{ color: 'gray' }}>Cancel</Button>
-          <Button
-            onClick={handleCreateUser}
-            variant="contained"
-            sx={{ borderRadius: '10px', bgcolor: 'black', '&:hover': { bgcolor: '#333' } }}
-          >
-            Create User
-          </Button>
+          <Button onClick={handleCreateUser} variant="contained" sx={{ borderRadius: '10px', bgcolor: 'black', '&:hover': { bgcolor: '#333' } }}>Create User</Button>
         </DialogActions>
       </Dialog>
     </div>

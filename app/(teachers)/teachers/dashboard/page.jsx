@@ -194,23 +194,18 @@ const TeacherDash = () => {
                                             borderRadius: '16px !important',
                                             '&:before': { display: 'none' },
                                             overflow: 'hidden',
-                                            backgroundColor: 'white', // Default, dark mode handled via class or detailed overrides
-                                            // Using styled-component approach for dark mode toggle might be complex with MUI.
-                                            // Let's stick to className for container, but MUI needs sx override for internal paper.
-                                            // Simple Fix: Add specific dark styles to the Accordion via className if supported or sx.
-                                            // Since MUI usually ignores className for bg color if sx is present, we need conditional sx or just rely on global theme if set up.
-                                            // But we are manually handling classes. Let's try CSS vars or className with !important.
+                                            backgroundColor: 'inherit'
                                         }}
-                                        className="bg-white dark:bg-gray-800 dark:text-white"
+                                        className="bg-white dark:bg-gray-800"
                                     >
                                         <AccordionSummary
                                             expandIcon={<ExpandMore className="text-gray-400" />}
                                             sx={{
                                                 padding: '16px 24px',
                                                 '&.Mui-expanded': { minHeight: 'auto' },
-                                                backgroundColor: 'inherit' // inherit from className
+                                                backgroundColor: 'inherit'
                                             }}
-                                            className="dark:bg-gray-800"
+                                            className="dark:text-white"
                                         >
                                             <div className="flex items-center justify-between w-full pr-4">
                                                 <div className="flex flex-col gap-1">
@@ -228,14 +223,13 @@ const TeacherDash = () => {
                                                         backgroundColor: '#f3e8ff',
                                                         color: '#7c3aed',
                                                         fontWeight: 600,
-                                                        '.dark &': { backgroundColor: '#4c1d95', color: '#e9d5ff' }
                                                     }}
                                                     className="dark:bg-violet-900 dark:text-violet-200"
                                                 />
                                             </div>
                                         </AccordionSummary>
 
-                                        <AccordionDetails sx={{ padding: '0 24px 24px 24px', backgroundColor: 'inherit' }} className="dark:bg-gray-800 dark:text-gray-300">
+                                        <AccordionDetails sx={{ padding: '0 24px 24px 24px', backgroundColor: 'inherit' }} className="dark:text-gray-300">
                                             <div className="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-8">
                                                 <div className="space-y-4">
                                                     <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">Topic Details</h4>
@@ -260,7 +254,7 @@ const TeacherDash = () => {
                                                             startIcon={<Visibility />}
                                                             onClick={() => router.push(`/teachers/courses/${topic.course_id}`)}
                                                             sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', color: '#64748b' }}
-                                                            className="dark:border-gray-600 dark:text-gray-300"
+                                                            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                                                         >
                                                             View
                                                         </Button>
