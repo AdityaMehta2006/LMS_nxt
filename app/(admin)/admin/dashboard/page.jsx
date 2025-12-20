@@ -176,9 +176,9 @@ const AdminDash = () => {
   });
 
   const filteredUsers = sortedUsers.filter(user =>
-    user.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.last_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>;
@@ -272,9 +272,9 @@ const AdminDash = () => {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar sx={{ bgcolor: '#e5e7eb', color: '#374151', width: 32, height: 32, fontSize: '0.875rem' }}>
-                        {user.first_name[0]}
+                        {user.firstName?.[0] || '?'}
                       </Avatar>
-                      <span className="font-semibold text-gray-800">{user.first_name} {user.last_name}</span>
+                      <span className="font-semibold text-gray-800">{user.firstName} {user.lastName}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-gray-600">{user.email}</TableCell>

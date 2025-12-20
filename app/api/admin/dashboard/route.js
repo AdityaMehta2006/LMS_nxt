@@ -36,6 +36,8 @@ export async function GET() {
 
     const usersFormatted = usersRaw.map(u => ({
       id: u.id,
+      firstName: u.firstName,
+      lastName: u.lastName,
       name: `${u.firstName || ''} ${u.lastName || ''}`.trim(),
       email: u.email,
       role: u.role ? u.role.roleName.toLowerCase() : 'unknown',
@@ -51,7 +53,7 @@ export async function GET() {
         programs,
         topics,
       },
-      teachers: usersFormatted,
+      users: usersFormatted,
     });
   } catch (error) {
     console.error("Error fetching admin dashboard data:", error);
