@@ -51,12 +51,13 @@ const AdminAssign = () => {
             setAssignments(Array.isArray(assignData) ? assignData : []);
 
             // Filter only eligible roles (Teacher, Teaching Assistant, Editor, etc.)
-            const eligibleRoles = ['teacher', 'editor', 'teaching assistant', 'publisher'];
-            setUsers((usersData.users || []).filter(u => eligibleRoles.includes(u.role)));
+            const eligibleRoles = ['teacher', 'editor', 'teaching assistant', 'publisher', 'admin'];
+            setUsers((usersData.users || []).filter(u => u.role && eligibleRoles.includes(u.role.toLowerCase())));
 
             setCourses(coursesData.courses || []);
         } catch (error) {
             console.error("Failed to fetch data", error);
+            alert("Failed to load data. Please refresh.");
         } finally {
             setLoading(false);
         }
@@ -76,20 +77,22 @@ const AdminAssign = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     userId: selectedUser.id,
-                    courseId: selectedCourse.course_id
+                    courseId: selectedCourse.course_id || selectedCourse.id
                 })
             });
 
             if (res.ok) {
-                fetchData();
+                await fetchData(); // Refresh table
                 setSelectedUser(null);
                 setSelectedCourse(null);
+                alert("User assigned successfully!");
             } else {
                 const err = await res.text();
                 alert("Assignment failed: " + err);
             }
         } catch (error) {
             console.error(error);
+            alert("An error occurred: " + error.message);
         } finally {
             setSubmitting(false);
         }
@@ -132,7 +135,8 @@ const AdminAssign = () => {
                 <div className="flex flex-col md:flex-row gap-4 items-end">
                     <Autocomplete
                         options={users}
-                        getOptionLabel={(option) => `${option.firstName} ${option.lastName} (${option.role})`}
+                        getOptionLabel={(option) => `${option.firstName || ''} ${option.lastName || ''} (${option.role || 'No Role'})`.trim()}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
                         value={selectedUser}
                         onChange={(event, newValue) => setSelectedUser(newValue)}
                         className="w-full md:w-1/3"
@@ -142,6 +146,7 @@ const AdminAssign = () => {
                     <Autocomplete
                         options={courses}
                         getOptionLabel={(option) => `${option.course_code} - ${option.name}`}
+                        isOptionEqualToValue={(option, value) => (option.course_id || option.id) === (value.course_id || value.id)}
                         value={selectedCourse}
                         onChange={(event, newValue) => setSelectedCourse(newValue)}
                         className="w-full md:w-1/3"

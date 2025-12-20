@@ -52,11 +52,11 @@ export async function POST(req) {
             return new NextResponse("User not found", { status: 404 });
         }
 
-        const allowedRoles = ['teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher'];
-        const userRole = user.role?.roleName?.toLowerCase();
+        const allowedRoles = ['teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher', 'admin'];
+        const userRole = user.role?.roleName?.toLowerCase().trim();
 
         if (!userRole || !allowedRoles.includes(userRole)) {
-            return new NextResponse(`Invalid user role (${user.role?.roleName}). Only Teachers, TAs, Editors, or Publishers can be assigned.`, { status: 400 });
+            return new NextResponse(`Invalid user role (${user.role?.roleName}). Only Teachers, TAs, Editors, Publishers, or Admins can be assigned.`, { status: 400 });
         }
 
         // Check if assignment exists

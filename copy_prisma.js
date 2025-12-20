@@ -31,11 +31,7 @@ if (fs.existsSync(source) && fs.existsSync(path.join(__dirname, '.next', 'standa
     copyDir(source, dest);
     console.log('Prisma folder copied successfully.');
 
-    if (fs.existsSync(sourceScripts)) {
-        console.log(`Copying Scripts folder from ${sourceScripts} to ${destScripts}...`);
-        copyDir(sourceScripts, destScripts);
-        console.log('Scripts folder copied successfully.');
-    }
+    // (Scripts copy removed)
 } else {
     // If standalone doesn't exist, maybe it's not a standalone build or build failed before this script
     console.warn('Standalone directory or Prisma folder not found. Skipping copy.');
