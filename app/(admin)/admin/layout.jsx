@@ -9,6 +9,7 @@ const adminLinks = [
   { label: 'Programs', href: '/admin/programs', icon: GraduationCap },
   { label: 'Schools', href: '/admin/schools', icon: School },
   { label: 'Analytics', href: '/admin/analytics', icon: LayoutDashboard },
+  { label: 'Assignments', href: '/admin/assign', icon: BookOpen },
 ];
 
 export default function Layout({ children }) {

@@ -374,10 +374,11 @@ const AdminDash = () => {
                 onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                 sx={{ borderRadius: '12px' }}
               >
-                <MenuItem value="student">Student</MenuItem>
                 <MenuItem value="teacher">Teacher</MenuItem>
                 <MenuItem value="editor">Editor</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="teaching assistant">Teaching Assistant</MenuItem>
+                <MenuItem value="publisher">Publisher</MenuItem>
               </Select>
             </FormControl>
           </div>

@@ -209,7 +209,7 @@ const EditorDash = () => {
       </motion.div>
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <ZenStatsCard label="Total Topics" value={stats.totalTopics} bg="#3b82f6" color="#1d4ed8" borderColor="#eff6ff" delay={0.1} />
         <ZenStatsCard label="In Editing" value={stats.inEditing} bg="#fb923c" color="#c2410c" borderColor="#fff7ed" delay={0.2} />
         <ZenStatsCard label="Under Review" value={stats.underReview} bg="#a855f7" color="#7e22ce" borderColor="#faf5ff" delay={0.3} />
@@ -218,7 +218,7 @@ const EditorDash = () => {
       </div>
 
       {/* ACTION BAR */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-bold text-gray-800">Workspace</h2>
           <div className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-md">
