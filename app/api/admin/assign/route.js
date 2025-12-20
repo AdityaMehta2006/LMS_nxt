@@ -25,7 +25,7 @@ export async function GET() {
                     }
                 }
             },
-            orderBy: { assignedAt: 'desc' }
+            orderBy: { id: 'desc' }
         });
         return NextResponse.json(assignments);
     } catch (error) {
