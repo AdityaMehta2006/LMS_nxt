@@ -43,18 +43,22 @@ import {
   AccountCircle
 } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from "recharts";
+import dynamic from "next/dynamic";
+// (Removed duplicates)
+
+// Dynamically import Recharts component with NO SSR
+const AnalyticsCharts = dynamic(
+  () => import("@/app/client/components/admin/AnalyticsCharts"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="h-64 bg-gray-50 rounded-3xl animate-pulse" />
+        <div className="h-64 bg-gray-50 rounded-3xl animate-pulse" />
+      </div>
+    )
+  }
+);
 
 // --- COCKPIT COMPONENTS ---
 // ... (CockpitStatsCard remains the same)
@@ -108,9 +112,6 @@ const AdminDash = () => {
   }, []);
 
   // ... (User handlers remain the same) 
-
-  // Colors for Pie Chart
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   // ... (Sort/Filter logic remains the same)
 
@@ -173,63 +174,7 @@ const AdminDash = () => {
       </div>
 
       {/* ANALYTICS CHARTS */}
-      {isMounted && analytics.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Bar Chart: Program Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100"
-          >
-            <h3 className="text-lg font-bold text-gray-800 mb-6">Course Distribution (By Program)</h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analytics}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
-                  <RechartsTooltip
-                    cursor={{ fill: '#F3F4F6' }}
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                  />
-                  <Bar dataKey="courses" fill="#3B82F6" radius={[4, 4, 0, 0]} barSize={40} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-
-          {/* Pie Chart: Program Share */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100"
-          >
-            <h3 className="text-lg font-bold text-gray-800 mb-6">Program Composition</h3>
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={analytics}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="courses"
-                  >
-                    {analytics.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <RechartsTooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </motion.div>
-        </div>
-      )}
+      <AnalyticsCharts analytics={analytics} />
 
       {/* USERS TABLE SECTION */}
       <motion.div
