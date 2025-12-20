@@ -25,6 +25,7 @@ export async function GET() {
     const schools = await prisma.school.count();
     const programs = await prisma.program.count();
     const topics = await prisma.contentItem.count();
+    const topicsPublished = await prisma.contentItem.count({ where: { workflowStatus: 'Published' } });
 
     const usersRaw = await prisma.user.findMany({
       include: {
@@ -52,6 +53,7 @@ export async function GET() {
         schools,
         programs,
         topics,
+        topicsPublished
       },
       users: usersFormatted,
     });

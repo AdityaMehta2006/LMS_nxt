@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
  */
 const Sidebar = ({ links, role, userName, userImage, basePath }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -30,38 +31,30 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
         closed: { x: "-100%", opacity: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
     };
 
-    const NavContent = () => (
+    const NavContent = ({ collapsed = false }) => (
         <>
             {/* PROFILE HEADER */}
-            <div className="p-8 flex flex-col items-center border-b border-gray-50">
+            <div className={cn("flex flex-col items-center border-b border-gray-50 transition-all duration-300", collapsed ? "p-4" : "p-8")}>
                 <div className="relative">
-                    <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-violet-500 to-fuchsia-500">
+                    <div className={cn("rounded-full p-1 bg-gradient-to-tr from-violet-500 to-fuchsia-500 transition-all duration-300", collapsed ? "w-10 h-10" : "w-20 h-20")}>
                         <img
                             src={userImage || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"}
                             alt="Profile"
                             className="w-full h-full rounded-full object-cover border-2 border-white"
                         />
                     </div>
-                    <div className={`absolute bottom-0 right-0 w-5 h-5 border-4 border-white rounded-full ${role === 'Admin' ? 'bg-emerald-500' : 'bg-violet-500'}`}></div>
+                    {!collapsed && <div className={`absolute bottom-0 right-0 w-5 h-5 border-4 border-white rounded-full ${role === 'Admin' ? 'bg-emerald-500' : 'bg-violet-500'}`}></div>}
                 </div>
-                <h2 className="mt-4 text-xl font-bold text-gray-800 tracking-tight text-center">{userName || "User"}</h2>
-                <span className="text-xs font-medium text-gray-400 uppercase tracking-widest">{role}</span>
-            </div>
-
-            {/* SEARCH (Optional) */}
-            <div className="px-6 py-4">
-                <div className="relative">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-violet-100 focus:outline-none transition-all placeholder:text-gray-400"
-                    />
-                </div>
+                {!collapsed && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                        <h2 className="mt-4 text-xl font-bold text-gray-800 tracking-tight text-center">{userName || "User"}</h2>
+                        <span className="text-xs font-medium text-gray-400 uppercase tracking-widest">{role}</span>
+                    </motion.div>
+                )}
             </div>
 
             {/* NAVIGATION LINKS */}
-            <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+            <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
                 {links.map((link) => {
                     const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
                     const Icon = link.icon;
@@ -70,8 +63,10 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                         <button
                             key={link.href}
                             onClick={() => router.push(link.href)}
+                            title={collapsed ? link.label : ""}
                             className={cn(
-                                "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden",
+                                "w-full flex items-center rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden",
+                                collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3",
                                 isActive
                                     ? "text-white shadow-lg shadow-violet-200"
                                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -88,7 +83,7 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                             {/* Content */}
                             <span className="relative z-10 flex items-center gap-3">
                                 {Icon && <Icon size={20} className={isActive ? "text-white" : "text-gray-400 group-hover:text-gray-600"} />}
-                                {link.label}
+                                {!collapsed && <span>{link.label}</span>}
                             </span>
 
                             {/* Hover Effect (Subtle slide) */}
@@ -104,10 +99,14 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
             <div className="p-4 border-t border-gray-50">
                 <button
                     onClick={() => router.push("/login")}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors font-medium text-sm"
+                    title={collapsed ? "Sign Out" : ""}
+                    className={cn(
+                        "w-full flex items-center gap-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors font-medium text-sm",
+                        collapsed ? "justify-center p-3" : "px-4 py-3"
+                    )}
                 >
                     <LogOut size={18} />
-                    <span>Sign Out</span>
+                    {!collapsed && <span>Sign Out</span>}
                 </button>
             </div>
         </>
@@ -149,12 +148,25 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
                         <X size={20} />
                     </button>
                 </div>
-                <NavContent />
+                <NavContent collapsed={false} />
             </motion.aside>
 
             {/* DESKTOP SIDEBAR (Static) */}
-            <aside className="hidden lg:flex flex-col w-64 h-screen sticky top-0 bg-white border-r border-gray-100 overflow-hidden">
-                <NavContent />
+            <aside
+                className={cn(
+                    "hidden lg:flex flex-col h-screen sticky top-0 bg-white border-r border-gray-100 overflow-hidden transition-all duration-300 ease-in-out",
+                    isCollapsed ? "w-20" : "w-64"
+                )}
+            >
+                {/* Collapse Toggle */}
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="absolute top-4 right-[-12px] z-50 bg-white border border-gray-200 rounded-full p-1 shadow-sm hover:shadow-md transition-all hover:bg-gray-50 text-gray-500"
+                >
+                    {isCollapsed ? <Menu size={14} /> : <Menu size={14} />}
+                </button>
+
+                <NavContent collapsed={isCollapsed} />
             </aside>
         </>
     );

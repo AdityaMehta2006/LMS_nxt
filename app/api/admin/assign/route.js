@@ -42,6 +42,21 @@ export async function POST(req) {
             return new NextResponse("Missing user or course ID", { status: 400 });
         }
 
+        // Verify User Role
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+            include: { role: true }
+        });
+
+        if (!user) {
+            return new NextResponse("User not found", { status: 404 });
+        }
+
+        const allowedRoles = ['teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher'];
+        if (!allowedRoles.includes(user.role?.roleName.toLowerCase())) {
+            return new NextResponse("Invalid user role for assignment. Only Teachers, TAs, Editors, or Publishers can be assigned.", { status: 400 });
+        }
+
         // Check if assignment exists
         const existing = await prisma.userCourseAssignment.findUnique({
             where: {

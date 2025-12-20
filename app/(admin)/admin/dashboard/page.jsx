@@ -84,7 +84,8 @@ const AdminDash = () => {
     totalTeachers: 0,
     totalEditors: 0,
     totalPrograms: 0,
-    totalTopics: 0
+    totalTopics: 0,
+    topicsPublished: 0
   });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -196,7 +197,21 @@ const AdminDash = () => {
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Admin Cockpit</h1>
           <p className="text-gray-500">System overview and user management.</p>
         </motion.div>
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex gap-3">
+          <Button
+            variant="outlined"
+            onClick={() => router.push('/admin/assign')}
+            sx={{
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 600,
+              borderColor: '#e5e7eb',
+              color: '#374151',
+              '&:hover': { borderColor: '#9ca3af', bgcolor: '#f9fafb' }
+            }}
+          >
+            Manage Assignments
+          </Button>
           <Button
             variant="contained"
             startIcon={<PersonAdd />}
@@ -217,11 +232,11 @@ const AdminDash = () => {
 
       {/* STATS GRID */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <CockpitStatsCard label="Total Users" value={stats.totalUsers} color="#3b82f6" icon={AccountCircle} delay={0.1} />
-        <CockpitStatsCard label="Teachers" value={stats.totalTeachers} color="#10b981" icon={School} delay={0.2} />
-        <CockpitStatsCard label="Editors" value={stats.totalEditors} color="#f59e0b" icon={Edit} delay={0.3} />
-        <CockpitStatsCard label="Programs" value={stats.totalPrograms} color="#8b5cf6" icon={AdminPanelSettings} delay={0.4} />
-        <CockpitStatsCard label="Topics" value={stats.totalTopics} color="#ec4899" icon={SupervisedUserCircle} delay={0.5} />
+        <CockpitStatsCard label="Programs" value={stats.totalPrograms} color="#3b82f6" icon={School} delay={0.1} />
+        <CockpitStatsCard label="Topics" value={stats.totalTopics} color="#ec4899" icon={AdminPanelSettings} delay={0.2} />
+        <CockpitStatsCard label="Teachers" value={stats.totalTeachers} color="#10b981" icon={AccountCircle} delay={0.3} />
+        <CockpitStatsCard label="Editors" value={stats.totalEditors} color="#f59e0b" icon={Edit} delay={0.4} />
+        <CockpitStatsCard label="Published" value={stats.topicsPublished} color="#8b5cf6" icon={SupervisedUserCircle} delay={0.5} />
       </div>
 
       {/* USERS TABLE SECTION */}

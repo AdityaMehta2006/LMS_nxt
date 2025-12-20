@@ -25,13 +25,18 @@ export function middleware(request) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // 4. If token exists, verify it isn't empty/dummy (basic check)
+    // 4. Strict check for Admin routes
+    if (path.startsWith('/admin') && !token) {
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    // 5. If token exists, verify it isn't empty/dummy (basic check)
     if (token && !isPublicPath) {
         // We allow them to proceed.
         return NextResponse.next()
     }
 
-    // 5. Default allow for public paths
+    // 6. Default allow for public paths
     return NextResponse.next()
 }
 
