@@ -102,11 +102,11 @@ const EditorDash = () => {
 
     // 2. My Tasks Filter
     if (showMyTasks && currentUser) {
-      // Check if assigned editor name matches current user name or contains it
-      // Using loose matching for robustness
+      // Construct full name from current user to match the format from dashboard API
+      const currentUserName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.toLowerCase().trim();
       const assigned = topic.assigned_editor_name?.toLowerCase().trim();
-      const current = currentUser.name?.toLowerCase().trim();
-      if (!assigned || !current || !assigned.includes(current)) {
+
+      if (!assigned || !currentUserName || !assigned.includes(currentUserName)) {
         return false;
       }
     }
@@ -200,7 +200,7 @@ const EditorDash = () => {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
         const data = await res.json();
-        setCurrentUser(data.user);
+        setCurrentUser(data); // Fixed: data is the user object directly
       }
     } catch (e) {
       console.error("Failed to fetch current user", e);
