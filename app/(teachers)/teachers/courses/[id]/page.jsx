@@ -1,25 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Box,
-  Tooltip,
-  IconButton,
-  Typography,
-  Chip,
-  Paper,
-} from "@mui/material";
-import { Menu, MenuItem } from "@mui/material";
-import { Trash, FileCheck, CheckCircle, PlayCircle, MessageSquare, Send, Download } from "lucide-react";
-import ProgressBar from "../../../../client/components/ProgressBar";
+import CourseHeader from "../../../../client/components/CourseHeader";
+import TopicTimeline from "../../../../client/components/TopicTimeline";
 import Createunitmodal from "../../../../client/components/Createunitmodal";
 import CreateTopicmodal from "../../../../client/components/CreateTopicmodal";
 import ScriptDialogue from "../../../../client/components/ScriptDialogue";
@@ -189,321 +172,57 @@ export default function CourseStructureDesign() {
     }
   };
 
-  if (loading) return <p className="p-8">Loading...</p>;
-  if (error) return <p className="p-8 text-red-500">Error: {error}</p>;
-  if (!course) return <p className="p-8">Course not found</p>;
-
-  const getAllTopics = () => {
-    return course.units ? course.units.flatMap((u) => u.topics || []) : [];
+  const handleDownloadFile = (topic, type) => {
+    const url = `/api/download/script?topicId=${topic.content_id}&type=${type}`;
+    window.open(url, '_blank');
   };
 
-  const userRole = course.userRole;
-  // Robust check for TA/Teacher role to enable features
-  const canApprove = ['teaching assistant', 'teacher assistant', 'publisher'].includes(userRole?.toLowerCase());
-  const canOverwrite = canApprove;
+  if (loading) return <div className="flex justify-center items-center h-screen"><p className="text-gray-500">Loading course data...</p></div>;
+  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (!course) return <div className="p-8 text-center">Course not found</div>;
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div>
-        <Button variant="outlined" onClick={handleBack}>← Back to Courses</Button>
+    <div className="min-h-screen bg-transparent p-6 pb-20">
+
+      {/* 1. Header with Stats */}
+      <CourseHeader
+        course={course}
+        onBack={handleBack}
+      />
+
+      {/* 2. Main Content / Timeline */}
+      <div className="mt-12">
+        <div className="max-w-5xl mx-auto flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Course Journey
+          </h2>
+        </div>
+
+        <TopicTimeline
+          units={course.units}
+          userRole={course.userRole}
+          onAddUnit={() => setOpenUnitModal(true)}
+          onAddTopic={(unitId) => handleOpenTopicModal(unitId)}
+          onOpenScriptModal={handleOpenScriptModal}
+          onOpenReviewModal={handleOpenReviewModal}
+          onDeleteTopic={handleDeleteTopic}
+          onApproveTopic={handleApprove}
+          onApproveScript={handleApproveScript}
+          onDownload={handleDownloadFile}
+        />
       </div>
 
-      {/* Course Info */}
-      <Card>
-        <CardHeader
-          title={
-            <span className="text-2xl">
-              {course.name || course.course_name}
-            </span>
-          }
-          subheader={`${course.department || "Department"} • ${course.program || "Program"
-            } • ${course.units ? course.units.length : 0} units • ${getAllTopics().length
-            } topics`}
-        />
-      </Card>
-
-      {/* Course Structure */}
-      <Card>
-        <CardHeader
-          title="Course Structure"
-          subheader="Manage units and topics for this course"
-        />
-
-        <CardContent>
-          <div className="space-y-4">
-            {course.units && course.units.length > 0 ? (
-              course.units.map((unit, unitIndex) => {
-                const unitId = unit.id || unit.section_id;
-                return (
-                  <Accordion
-                    key={unitId}
-                    expanded={expandedUnit === unitId}
-                    onChange={() =>
-                      setExpandedUnit(expandedUnit === unitId ? null : unitId)
-                    }
-                  >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <div className="flex justify-between w-full">
-                        <span className="font-medium">
-                          Unit {unit.order}: {unit.name}
-                        </span>
-                        <span className="text-gray-500 text-sm">
-                          {unit.topics ? unit.topics.length : 0} topics
-                        </span>
-                      </div>
-                    </AccordionSummary>
-
-                    <AccordionDetails sx={{ backgroundColor: 'inherit' }} className="bg-gray-50 dark:bg-gray-900/50">
-                      <div className="space-y-2">
-                        {!unit.topics ||
-                          (unit.topics.length === 0 && (
-                            <p className="text-gray-500 dark:text-gray-400 italic text-center py-4">
-                              No topics added yet
-                            </p>
-                          ))}
-
-                        {unit.topics &&
-                          unit.topics.map((topic, topicIndex) => {
-                            const topicStatus =
-                              topic.status?.toLowerCase() || "planned";
-
-                            // Logic for button requirements
-                            const isScriptingDone = topicStatus !== "planned";
-                            const isReviewStage = topicStatus === "under_review"; // Updated to match DB
-                            const hasMaterials = topic.script?.ppt || topic.script?.doc || topic.script?.zip;
-
-                            return (
-                              <Paper
-                                key={topic.id || topic.content_id}
-                                elevation={1}
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  p: 2,
-                                  mb: 1.5,
-                                  borderRadius: 2,
-                                  "&:hover": { boxShadow: 3 },
-                                }}
-                                className="bg-white dark:bg-gray-800 dark:text-white"
-                              >
-                                {/* Topic Info */}
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 2,
-                                    flexWrap: "wrap",
-                                  }}
-                                >
-                                  <Chip
-                                    label={`${unitIndex + 1}.${topicIndex + 1}`}
-                                    color="primary"
-                                    variant="outlined"
-                                    size="small"
-                                  />
-                                  <Typography variant="body1" fontWeight={500}>
-                                    {topic.name}
-                                  </Typography>
-                                  <Chip
-                                    label={`${topic.estimatedTime ||
-                                      topic.estimated_duration_min ||
-                                      0
-                                      } min`}
-                                    size="small"
-                                    sx={{ bgcolor: "action.hover" }}
-                                    className="dark:bg-gray-700 dark:text-gray-300"
-                                  />
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: 1,
-                                    }}
-                                  >
-                                    <ProgressBar status={topicStatus} />
-                                    <Typography
-                                      variant="caption"
-                                      sx={{
-                                        textTransform: "capitalize",
-                                        color: "text.secondary",
-                                      }}
-                                    >
-                                      {topicStatus.replace('_', ' ')}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-
-                                {/* Topic Actions */}
-                                <Box sx={{ display: "flex" }}>
-                                  {topic.videoLink && (
-                                    <Tooltip title={topicStatus === "published" ? "Video Published" : "Watch & Review"}>
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          color="primary"
-                                          onClick={() => handleOpenReviewModal(topic)}
-                                          disabled={topicStatus === "published"}
-                                        >
-                                          <MessageSquare />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-                                  )}
-
-                                  <Tooltip
-                                    title={
-                                      isScriptingDone
-                                        ? (canOverwrite ? "Edit Script (TA)" : "Scripting is complete")
-                                        : "Upload/Edit Script"
-                                    }
-                                  >
-                                    {/* Span wrapper is needed for Tooltip on disabled button */}
-                                    <span>
-                                      <IconButton
-                                        size="small"
-                                        onClick={() =>
-                                          handleOpenScriptModal(
-                                            topic,
-                                            unitIndex,
-                                            topicIndex
-                                          )
-                                        }
-                                        disabled={topicStatus === "published" || (isScriptingDone && !canOverwrite)} // Locked if published
-                                      >
-                                        <FileCheck />
-                                      </IconButton>
-                                    </span>
-                                  </Tooltip>
-
-                                  {/* Download Button */}
-                                  <Tooltip title="Download Files">
-                                    <IconButton
-                                      size="small"
-                                      onClick={(e) => handleDownloadMenuOpen(e, topic)}
-                                    >
-                                      <Download />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  {canApprove && ( // Conditional Render
-                                    <Tooltip
-                                      title={
-                                        isReviewStage
-                                          ? "Approve Topic (Send to Publisher)"
-                                          : "Available only during review stage"
-                                      }
-                                    >
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          disabled={!isReviewStage}
-                                          onClick={() => handleApprove(topic.content_id)}
-                                          color="success"
-                                        >
-                                          <CheckCircle />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-                                  )}
-
-                                  {canApprove && topicStatus === "scripted" && (!hasMaterials || topic.materialsApproved) && ( // Approve Script Button (Text only OR after materials approved)
-                                    <Tooltip title="Approve Script (Send to Editor)">
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          onClick={() => handleApproveScript(topic.content_id)}
-                                          sx={{ color: "#f59e0b" }}
-                                        >
-                                          <Send />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-                                  )}
-
-                                  {canApprove && hasMaterials && !topic.materialsApproved && topicStatus !== "published" && (
-                                    <Tooltip title="Approve Materials & Send to Editor">
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          color="warning"
-                                          onClick={() => {
-                                            if (window.confirm("Are you sure you want to approve these materials and send them to the editor?")) {
-                                              fetch("/api/topics/approve-materials", {
-                                                method: "POST",
-                                                headers: { "Content-Type": "application/json" },
-                                                body: JSON.stringify({ topicId: topic.content_id })
-                                              }).then(res => {
-                                                if (res.ok) fetchCourse();
-                                                else alert("Failed to approve materials");
-                                              });
-                                            }
-                                          }}
-                                        >
-                                          <FileCheck />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-                                  )}
-
-                                  <Tooltip title="Delete Topic">
-                                    <IconButton
-                                      size="small"
-                                      color="error"
-                                      onClick={() =>
-                                        handleDeleteTopic(topic.content_id, topic.name)
-                                      }
-                                      disabled={topicStatus === "published"}
-                                    >
-                                      <Trash />
-                                    </IconButton>
-                                  </Tooltip>
-                                </Box>
-                              </Paper>
-                            );
-                          })}
-
-                        <Button
-                          variant="contained"
-                          className="w-full mt-2"
-                          onClick={() => handleOpenTopicModal(unit.section_id)} // Use section_id, not prefixed id
-                        >
-                          + Add Topic
-                        </Button>
-                      </div>
-                    </AccordionDetails>
-                  </Accordion>
-                );
-              })
-            ) : (
-              <p className="text-gray-500 italic text-center py-8">
-                No units found for this course
-              </p>
-            )}
-
-            <Button
-              variant="outlined"
-              className="w-full"
-              onClick={() => setOpenUnitModal(true)}
-            >
-              + Add Unit
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
+      {/* --- Modals (Keep existing functionality) --- */}
       <Createunitmodal
         open={openUnitModal}
         onClose={() => setOpenUnitModal(false)}
-        courseId={params.id} // Pass the courseId
+        courseId={params.id}
       />
 
       <CreateTopicmodal
         open={openTopicModal}
         onClose={() => setOpenTopicModal(false)}
-        unitId={currentUnitId} // Pass unitId
-      // Note: You must update CreateTopicmodal to accept and use this 'unitId' prop
+        unitId={currentUnitId}
       />
 
       <ScriptDialogue
@@ -513,39 +232,13 @@ export default function CourseStructureDesign() {
         onUploadSuccess={fetchCourse}
       />
 
-      {/* Download Menu */}
-      <Menu
-        anchorEl={downloadAnchorEl}
-        open={Boolean(downloadAnchorEl)}
-        onClose={handleDownloadMenuClose}
-      >
-        <MenuItem
-          onClick={() => downloadFile('ppt')}
-          disabled={!activeDownloadTopic?.script?.ppt}
-        >
-          Download PPT
-        </MenuItem>
-        <MenuItem
-          onClick={() => downloadFile('doc')}
-          disabled={!activeDownloadTopic?.script?.doc}
-        >
-          Download Doc/PDF
-        </MenuItem>
-        <MenuItem
-          onClick={() => downloadFile('zip')}
-          disabled={!activeDownloadTopic?.script?.zip}
-        >
-          Download Zip/Other
-        </MenuItem>
-      </Menu>
-
       <ReviewDialogue
         open={openReviewModal}
         onClose={() => setOpenReviewModal(false)}
         topic={currentTopic}
         onFeedbackSubmit={handleFeedbackSubmit}
         onApprove={handleApprove}
-        canApprove={canApprove} // Pass prop
+        canApprove={canApprove}
       />
     </div>
   );

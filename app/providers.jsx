@@ -74,7 +74,7 @@ const MuiProvider = ({ children }) => {
 
 export function Providers({ children }) {
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+    <NextThemesProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
       <MuiProvider>
         {children}
       </MuiProvider>

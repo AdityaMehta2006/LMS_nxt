@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
 import { LogOut, Menu, X, Search, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,26 +20,11 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
-    const { theme, setTheme } = useTheme();
 
     // Close sidebar on route change (mobile)
     React.useEffect(() => {
         setIsOpen(false);
     }, [pathname]);
-
-    const ThemeToggle = ({ collapsed }) => (
-        <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title={collapsed ? "Toggle Theme" : ""}
-            className={cn(
-                "w-full flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors font-medium text-sm",
-                collapsed ? "justify-center p-3" : "px-4 py-3"
-            )}
-        >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            {!collapsed && <span>{theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}</span>}
-        </button>
-    );
 
     const sidebarVariants = {
         open: { x: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 30 } },
@@ -114,7 +98,6 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
 
             {/* FOOTER / LOGOUT */}
             <div className="p-4 border-t border-gray-50 dark:border-gray-800 flex flex-col gap-2">
-                <ThemeToggle collapsed={collapsed} />
                 <button
                     onClick={() => router.push("/login")}
                     title={collapsed ? "Sign Out" : ""}
