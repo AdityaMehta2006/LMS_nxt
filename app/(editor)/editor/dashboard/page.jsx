@@ -34,6 +34,7 @@ import {
   Visibility,
   Search
 } from "@mui/icons-material";
+import { cn } from "@/lib/utils";
 
 // --- ZEN COMPONENTS ---
 const ZenStatsCard = ({ label, value, color, bg, borderColor, delay }) => {
