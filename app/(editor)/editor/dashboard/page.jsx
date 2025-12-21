@@ -21,7 +21,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton
+  IconButton,
+  Switch,
+  FormControlLabel
 } from "@mui/material";
 import {
   ExpandMore,
@@ -86,13 +88,30 @@ const EditorDash = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [canPublish, setCanPublish] = useState(false);
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showMyTasks, setShowMyTasks] = useState(false);
+
   // Filter Logic
   const editingTopics = (topicsInProgress || []).filter(topic => {
+    // 1. Status Filter
     if (filterStatus !== "All") {
       if (filterStatus === "In Editing" && !['Editing', 'Scripted', 'Post_Editing'].includes(topic.workflow_status)) return false;
       if (filterStatus === "Under Review" && !['Under_Review', 'ReadyForVideoPrep'].includes(topic.workflow_status)) return false;
       if (filterStatus === "Approved" && topic.workflow_status !== 'Approved') return false;
     }
+
+    // 2. My Tasks Filter
+    if (showMyTasks && currentUser) {
+      // Check if assigned editor name matches current user name or contains it
+      // Using loose matching for robustness
+      const assigned = topic.assigned_editor_name?.toLowerCase().trim();
+      const current = currentUser.name?.toLowerCase().trim();
+      if (!assigned || !current || !assigned.includes(current)) {
+        return false;
+      }
+    }
+
+    // 3. Search Query
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -175,6 +194,19 @@ const EditorDash = () => {
     return step ? step.color : '#64748b';
   };
 
+  const fetchCurrentUser = async () => {
+    try {
+      // Attempt to fetch user info. If /api/auth/me exists and returns user:
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data.user);
+      }
+    } catch (e) {
+      console.error("Failed to fetch current user", e);
+    }
+  };
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -195,6 +227,7 @@ const EditorDash = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    fetchCurrentUser();
   }, []);
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>;
@@ -229,7 +262,18 @@ const EditorDash = () => {
             {editingTopics.length} Active
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showMyTasks}
+                onChange={(e) => setShowMyTasks(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="My Tasks"
+            className="text-gray-700 dark:text-gray-300 mr-2"
+          />
           <FormControl size="small" sx={{ minWidth: 150 }} className="dark:bg-gray-700 rounded-lg">
             <InputLabel className={filterStatus !== "All" ? "" : "dark:text-gray-400"}>Status Filter</InputLabel>
             <Select
@@ -281,8 +325,7 @@ const EditorDash = () => {
                     borderRadius: '12px !important',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
                     '&:before': { display: 'none' },
-                    backgroundColor: topic.review_notes ? '#fef2f2' : 'white', // Feedback overrides everything? Or combine?
-                    // Let's handle dark mode feedback bg manually if needed
+                    backgroundColor: 'inherit' // Remove hardcoded white to allow Tailwind to control it
                   }}
                   className={cn(
                     "transition-colors",
@@ -293,7 +336,14 @@ const EditorDash = () => {
                     <div className="flex items-center gap-4 w-full pr-4">
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-400 font-semibold uppercase">{topic.course_title}</span>
-                        <span className="text-base font-bold text-gray-800 dark:text-gray-100">{topic.topic_title}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base font-bold text-gray-800 dark:text-gray-100">{topic.topic_title}</span>
+                          {topic.assigned_editor_name && (
+                            <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">
+                              {topic.assigned_editor_name}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <div className="ml-auto flex gap-2">
                         {topic.review_notes && (

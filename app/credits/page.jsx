@@ -343,6 +343,114 @@ const CreditsPage = () => {
                 </Grid>
             </Container>
 
+            {/* Design Philosophy Section */}
+            <Box sx={{ py: 8, bgcolor: "white", position: "relative" }}>
+                <Container maxWidth="lg">
+                    <Box sx={{ textAlign: "center", mb: 6 }}>
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                color: "#0f172a",
+                                fontWeight: "bold",
+                                letterSpacing: "0.02em",
+                                position: "relative",
+                                display: "inline-block",
+                                "&::after": {
+                                    content: '""',
+                                    position: "absolute",
+                                    bottom: -8,
+                                    left: "50%",
+                                    transform: "translateX(-50%)",
+                                    width: 80,
+                                    height: 4,
+                                    background: "linear-gradient(90deg, #ec4899, #8b5cf6)",
+                                    borderRadius: 2
+                                }
+                            }}
+                        >
+                            Our Design Philosophy
+                        </Typography>
+                    </Box>
+
+                    <Grid container spacing={4} justifyContent="center">
+                        {/* Card 1: Premium Experience */}
+                        <Grid item xs={12} md={4}>
+                            <Box sx={{
+                                p: 4,
+                                height: '100%',
+                                borderRadius: 4,
+                                bgcolor: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': { transform: 'translateY(-5px)', borderColor: '#3b82f6' }
+                            }}>
+                                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, textAlign: 'center', color: '#0f172a' }}>
+                                    Premium Experience
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#64748b', textAlign: 'center' }}>
+                                    We prioritize a sense of quality and modernity, moving beyond basic functionality to deliver a state-of-the-art interface that feels polished and professional.
+                                </Typography>
+                            </Box>
+                        </Grid>
+
+                        {/* Card 2: Dynamic Design */}
+                        <Grid item xs={12} md={4}>
+                            <Box sx={{
+                                p: 4,
+                                height: '100%',
+                                borderRadius: 4,
+                                bgcolor: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': { transform: 'translateY(-5px)', borderColor: '#8b5cf6' }
+                            }}>
+                                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6' }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m16 12-4-4-4 4" /><path d="M12 16V8" /></svg>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, textAlign: 'center', color: '#0f172a' }}>
+                                    Dynamic Interactions
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#64748b', textAlign: 'center' }}>
+                                    Interfaces should feel alive. We use smooth transitions, hover effects, and micro-animations to create an engaging responsiveness that encourages interaction.
+                                </Typography>
+                            </Box>
+                        </Grid>
+
+                        {/* Card 3: Visual Excellence */}
+                        <Grid item xs={12} md={4}>
+                            <Box sx={{
+                                p: 4,
+                                height: '100%',
+                                borderRadius: 4,
+                                bgcolor: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': { transform: 'translateY(-5px)', borderColor: '#ec4899' }
+                            }}>
+                                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'rgba(236, 72, 153, 0.1)', color: '#ec4899' }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" /></svg>
+                                    </Box>
+                                </Box>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, textAlign: 'center', color: '#0f172a' }}>
+                                    Visual Excellence
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#64748b', textAlign: 'center' }}>
+                                    Aesthetics matter. We curate harmonious color palettes, modern typography, and clean layouts to ensure the platform is not just useful, but beautiful to use.
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Container>
+            </Box>
+
             {/* Blue Footer Section */}
             <Box
                 sx={{
