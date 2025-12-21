@@ -181,6 +181,9 @@ export default function CourseStructureDesign() {
   if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   if (!course) return <div className="p-8 text-center">Course not found</div>;
 
+  const userRole = course.userRole;
+  const canApprove = ['teaching assistant', 'teacher assistant', 'publisher'].includes(userRole?.toLowerCase());
+
   return (
     <div className="min-h-screen bg-transparent p-6 pb-20">
 
