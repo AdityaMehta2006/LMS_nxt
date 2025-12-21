@@ -121,11 +121,9 @@ function CourseContent() {
               borderRadius: '12px',
               textTransform: 'none',
               fontWeight: 600,
-              bgcolor: 'black',
-              '&:hover': { bgcolor: '#333' },
               boxShadow: '0 4px 14px 0 rgba(0,0,0,0.1)'
             }}
-            className="dark:bg-blue-600 dark:hover:bg-blue-700 mx-auto"
+            className="bg-black hover:bg-gray-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white mx-auto"
           >
             Add Course
           </Button>

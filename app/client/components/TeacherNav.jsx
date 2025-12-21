@@ -22,7 +22,7 @@ const TeacherNav = ({ userId }) => {
   return (
     <>
       <AppBar position="fixed">
-        <Toolbar className="flex justify-between bg-gray-50 text-black">
+        <Toolbar className="flex justify-between bg-gray-50 text-black dark:bg-gray-900 dark:text-gray-100 transition-colors">
 
           {/* Menu Icon */}
           <Menu
@@ -31,16 +31,16 @@ const TeacherNav = ({ userId }) => {
           />
 
           {/* Search Box */}
-          <div className="flex flex-row items-center border-2 border-gray-400 px-2 py-1 m-2 rounded-md">
-            <Search/>
-            <InputBase className="pl-2" placeholder="Search..." />
+          <div className="flex flex-row items-center border-2 border-gray-400 dark:border-gray-600 px-2 py-1 m-2 rounded-md bg-white dark:bg-gray-800">
+            <Search />
+            <InputBase className="pl-2 text-black dark:text-white" placeholder="Search..." />
           </div>
         </Toolbar>
       </AppBar>
 
       {/* Drawer */}
       <Drawer anchor="left" open={open} onClose={() => toggleDrawer(false)}>
-        <Box className="w-64 h-full flex flex-col p-4 text-lg">
+        <Box className="w-64 h-full flex flex-col p-4 text-lg bg-white dark:bg-gray-900 text-black dark:text-gray-100">
 
           {/* TOP SECTION */}
           <div className="flex flex-col gap-5">
@@ -51,28 +51,26 @@ const TeacherNav = ({ userId }) => {
                 className="w-20 h-20 rounded-full shadow-md"
                 src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.jixXH_Els1MXBRmKFdMQPAHaHa%3Fcb%3Ducfimg2%26pid%3DApi%26ucfimg%3D1&f=1&ipt=5f2c9482b3203216f66634e457db5adab9cbfcd1542e6d9ac338fae4e0abf505&ipo=images"
               />
-              <p className="py-2 text-2xl font-semibold">Hi Teacher</p>
+              <p className="py-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">Hi Teacher</p>
             </div>
 
             {/* Menu Buttons */}
             <button
-              className={`rounded-xl px-3 py-2 transition-all duration-200 ${
-                active === 1 
-                  ? "bg-black text-white" 
-                  : "bg-white text-black hover:bg-gray-200"
-              }`}
-              onClick={() => {isactive(1); router.push(`/teachers/dashboard?userId=${userId}`)}}
+              className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 1
+                  ? "bg-black text-white dark:bg-blue-600"
+                  : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                }`}
+              onClick={() => { isactive(1); router.push(`/teachers/dashboard?userId=${userId}`) }}
             >
               Dashboard
             </button>
-          
+
             <button
-              className={`rounded-xl px-3 py-2 transition-all duration-200 ${
-                active === 2 
-                  ? "bg-black text-white" 
-                  : "bg-white text-black hover:bg-gray-200"
-              }`}
-              onClick={()=>{router.push(`/teachers/courses?userId=${userId}`); isactive(2);}}
+              className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 2
+                  ? "bg-black text-white dark:bg-blue-600"
+                  : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                }`}
+              onClick={() => { router.push(`/teachers/courses?userId=${userId}`); isactive(2); }}
             >
               Courses
             </button>
@@ -80,7 +78,7 @@ const TeacherNav = ({ userId }) => {
 
           {/* SIGN OUT BUTTON AT BOTTOM */}
           <div className="mt-auto">
-             <button className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200" onClick={() => router.push('/login')}>
+            <button className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200" onClick={() => router.push('/login')}>
               <LogOut size={20} /> Sign Out
             </button>
           </div>

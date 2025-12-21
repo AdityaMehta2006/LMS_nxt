@@ -52,8 +52,8 @@ const AnalyticsCharts = dynamic(
     ssr: false,
     loading: () => (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="h-64 bg-gray-50 rounded-3xl animate-pulse" />
-        <div className="h-64 bg-gray-50 rounded-3xl animate-pulse" />
+        <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
+        <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
       </div>
     )
   }
