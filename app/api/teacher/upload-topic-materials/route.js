@@ -46,6 +46,25 @@ export async function POST(req) {
 
         const topicIdInt = parseInt(topicId);
 
+        // Check Topic Status BEFORE processing files
+        const existingTopic = await prisma.contentItem.findUnique({
+            where: { id: topicIdInt },
+            select: { workflowStatus: true }
+        });
+
+        if (!existingTopic) {
+            return NextResponse.json({ error: "Topic not found" }, { status: 404 });
+        }
+
+        // Lock if status is beyond "Scripted" (e.g. Under_Review, Editing, Approved, etc.)
+        // Teacher can only upload/re-upload if it's Planned (new) or Scripted (correction before approval)
+        if (existingTopic.workflowStatus !== 'Planned' && existingTopic.workflowStatus !== 'Scripted') {
+            return NextResponse.json(
+                { error: "Upload is locked. Topic is currently under review or processing." },
+                { status: 403 }
+            );
+        }
+
         // Prepare file buffers
         let pptFileData = null;
         if (pptFile && typeof pptFile !== 'string') {

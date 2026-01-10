@@ -8,9 +8,9 @@ Courses:
 Teacher: Dr. Abhaya
 Email:   abhaya.nb@christuniversity.in
 Courses:
-  - Postcolonial Studies ( Theory & Practical) (?)
+  - Postcolonial Studies ( Theory & Practical) (MELO501-2)
 
-Teacher: Arpita
+Teacher: Aleena
 Email:   aleena.jose@christuniversity.in
 Courses:
   - International Trade and Finance (ECO410-2)
@@ -24,7 +24,7 @@ Courses:
 Teacher: Dr. Anupama Nayar
 Email:   anupama.nayar@christuniversity.in
 Courses:
-  - British Literature II (?)
+  - British Literature II (MELO503-2)
 
 Teacher: Arpita
 Email:   arpita.goswami@christuniversity.in
@@ -94,7 +94,7 @@ Courses:
 Teacher: Dr. Joseph Edward Felix
 Email:   joseph.edward@christuniversity.in
 Courses:
-  - Audio - Visual Studies (?)
+  - Audio - Visual Studies (MELO504-2)
 
 Teacher: Lakshmi B
 Email:   lakshmi.b@christuniversity.in
@@ -144,7 +144,7 @@ Courses:
 Teacher: Dr Ritika Banerjee  / Dr Shobana
 Email:   ritika.b@christuniversity.in
 Courses:
-  - American Literature (?)
+  - American Literature (MELO502-2)
 
 Teacher: Dr. Thirunavukarrasu, Dr Rohini V
 Email:   rohini.v@christuniversity.in
@@ -154,7 +154,7 @@ Courses:
 Teacher: Dr Saji Varghese
 Email:   saji.varghese@christuniversity.in
 Courses:
-  - Entrepreneurship & Design Thinking (?)
+  - Entrepreneurship & Design Thinking (MELO511-1)
 
 Teacher: Dr Deepa V Jose, Dr Sandeep J
 Email:   sandeep.j@christuniversity.in
@@ -184,7 +184,7 @@ Courses:
 Teacher: Dr Suhash
 Email:   suhash.s@christuniversity.in
 Courses:
-  - Writing for Digital Platforms (?)
+  - Writing for Digital Platforms (MELO512-1)
 
 Teacher: Dr Cynthia
 Email:   suresh.kalaimani@christuniversity.in

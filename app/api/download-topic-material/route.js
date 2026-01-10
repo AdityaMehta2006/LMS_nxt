@@ -57,23 +57,28 @@ export async function GET(req) {
         const isPlaceholder = !teacherName || ["tbd", "to be decided", "unknown"].includes(teacherName.toLowerCase());
 
         if (isPlaceholder) {
-            // Priority: Find the "Teacher" assigned to this Course
-            const assignedTeacher = await prisma.userCourseAssignment.findFirst({
+            // Priority 1: Find the "Teacher" assigned to this Course
+            let assignedUser = await prisma.userCourseAssignment.findFirst({
                 where: {
                     courseId: topic.section.courseId,
-                    user: {
-                        role: {
-                            roleName: "Teacher"
-                        }
-                    }
+                    user: { role: { roleName: "Teacher" } }
                 },
-                include: {
-                    user: true
-                }
+                include: { user: true }
             });
 
-            if (assignedTeacher && assignedTeacher.user) {
-                teacherName = `${assignedTeacher.user.firstName} ${assignedTeacher.user.lastName || ''}`.trim();
+            // Priority 2: If no Teacher, find a "Teaching Assistant" assigned to this Course
+            if (!assignedUser) {
+                assignedUser = await prisma.userCourseAssignment.findFirst({
+                    where: {
+                        courseId: topic.section.courseId,
+                        user: { role: { roleName: "Teaching Assistant" } }
+                    },
+                    include: { user: true }
+                });
+            }
+
+            if (assignedUser && assignedUser.user) {
+                teacherName = `${assignedUser.user.firstName} ${assignedUser.user.lastName || ''}`.trim();
             } else {
                 teacherName = "TBD";
             }

@@ -36,10 +36,18 @@ export async function GET() {
 
 export async function POST(req) {
     try {
-        const { userId, courseId } = await req.json();
+        let { userId, courseId, email } = await req.json();
 
-        if (!userId || !courseId) {
-            return new NextResponse("Missing user or course ID", { status: 400 });
+        if ((!userId && !email) || !courseId) {
+            return new NextResponse("Missing user ID/Email or course ID", { status: 400 });
+        }
+
+        if (!userId && email) {
+            const user = await prisma.user.findUnique({ where: { email } });
+            if (!user) {
+                return new NextResponse("User not found", { status: 404 });
+            }
+            userId = user.id;
         }
 
         // Verify User Role
@@ -89,12 +97,10 @@ export async function POST(req) {
 
 export async function DELETE(req) {
     try {
-        const { searchParams } = new URL(req.url);
-        const userId = searchParams.get("userId");
-        const courseId = searchParams.get("courseId");
+        const { userId, courseId } = await req.json();
 
         if (!userId || !courseId) {
-            return new NextResponse("Missing userId or courseId", { status: 400 });
+            return new NextResponse("Missing user or course ID", { status: 400 });
         }
 
         await prisma.userCourseAssignment.delete({
@@ -106,9 +112,9 @@ export async function DELETE(req) {
             },
         });
 
-        return new NextResponse("Assignment revoked", { status: 200 });
+        return new NextResponse("Assignment removed", { status: 200 });
     } catch (error) {
-        console.error("Error revoking assignment:", error);
+        console.error("Error removing assignment:", error);
         return new NextResponse("Internal Server Error: " + error.message, { status: 500 });
     }
 }

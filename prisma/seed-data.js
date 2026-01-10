@@ -1,7 +1,6 @@
 module.exports = {
     "schools": [
         {
-            "id": 1,
             "name": "School of Commerce, Finance and Accountancy"
         },
         {
@@ -260,37 +259,37 @@ module.exports = {
             "id": 52,
             "programId": 9,
             "title": "American Literature",
-            "code": "MAE-001"
+            "code": "MELO502-2"
         },
         {
             "id": 53,
             "programId": 9,
             "title": "Audio - Visual Studies",
-            "code": "MAE-002"
+            "code": "MELO504-2"
         },
         {
             "id": 54,
             "programId": 9,
             "title": "British Literature II",
-            "code": "MAE-003"
+            "code": "MELO503-2"
         },
         {
             "id": 55,
             "programId": 9,
             "title": "Entrepreneurship & Design Thinking",
-            "code": "MAE-004"
+            "code": "MELO511-1"
         },
         {
             "id": 56,
             "programId": 9,
             "title": "Postcolonial Studies ( Theory & Practical)",
-            "code": "MAE-005"
+            "code": "MELO501-2"
         },
         {
             "id": 57,
             "programId": 9,
             "title": "Writing for Digital Platforms",
-            "code": "MAE-006"
+            "code": "MELO512-1"
         }
     ],
     "users": [
@@ -813,10 +812,7 @@ module.exports = {
             "userId": 56,
             "courseId": 44
         },
-        {
-            "userId": 56,
-            "courseId": 46
-        },
+
         {
             "userId": 57,
             "courseId": 44
@@ -869,6 +865,7 @@ module.exports = {
             "userId": 70,
             "courseId": 45
         },
+
         {
             "userId": 71,
             "courseId": 46

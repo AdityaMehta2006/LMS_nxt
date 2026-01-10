@@ -99,27 +99,43 @@ export async function GET(req) {
         const topicName = script.content.title || "Untitled";
 
         // Teacher Name Logic
-        let teacherName = script.content.section.profName;
+        let teacherName = "";
+
+        // Priority 1: The actual Uploader (if recorded)
+        if (script.content.uploadedByEditor) {
+            teacherName = `${script.content.uploadedByEditor.firstName || ''} ${script.content.uploadedByEditor.lastName || ''}`.trim();
+        }
+
+        // Priority 2: Section Professor Name
+        if (!teacherName && script.content.section.profName) {
+            teacherName = script.content.section.profName;
+        }
+
         const isPlaceholder = !teacherName || ["tbd", "to be decided", "unknown"].includes(teacherName.toLowerCase());
 
         if (isPlaceholder) {
-            // Priority: Find the "Teacher" assigned to this Course
-            const assignedTeacher = await prisma.userCourseAssignment.findFirst({
+            // Priority 3: Find the "Teacher" assigned to this Course
+            let assignedUser = await prisma.userCourseAssignment.findFirst({
                 where: {
                     courseId: script.content.section.courseId,
-                    user: {
-                        role: {
-                            roleName: "Teacher"
-                        }
-                    }
+                    user: { role: { roleName: "Teacher" } }
                 },
-                include: {
-                    user: true
-                }
+                include: { user: true }
             });
 
-            if (assignedTeacher && assignedTeacher.user) {
-                teacherName = `${assignedTeacher.user.firstName} ${assignedTeacher.user.lastName || ''}`.trim();
+            // Priority 4: If no Teacher, find a "Teaching Assistant" assigned to this Course
+            if (!assignedUser) {
+                assignedUser = await prisma.userCourseAssignment.findFirst({
+                    where: {
+                        courseId: script.content.section.courseId,
+                        user: { role: { roleName: "Teaching Assistant" } }
+                    },
+                    include: { user: true }
+                });
+            }
+
+            if (assignedUser && assignedUser.user) {
+                teacherName = `${assignedUser.user.firstName} ${assignedUser.user.lastName || ''}`.trim();
             } else {
                 teacherName = "TBD";
             }
