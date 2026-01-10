@@ -55,6 +55,9 @@ export async function GET(req) {
         if (user.schoolId) {
           whereCondition.OR.push({ program: { schoolId: user.schoolId } });
         }
+          { assignments: { some: { userId: parseInt(userId) } } },
+          { program: { schoolId: user.schoolId } }
+        ];
       }
 
       const course = await prisma.course.findFirst({
@@ -157,6 +160,7 @@ export async function GET(req) {
           OR: [
             { assignments: { some: { userId: parseInt(userId) } } },
             ...(user.schoolId ? [{ program: { schoolId: user.schoolId } }] : [])
+            { program: { schoolId: user.schoolId } }
           ]
         }),
         ...(programId && { programId: parseInt(programId) }),
