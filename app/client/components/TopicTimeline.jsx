@@ -38,6 +38,7 @@ const getUnitDuration = (topics) => {
 
 // Map status to colors and icons
 const getStatusConfig = (status) => {
+    const s = status?.toLowerCase() || "planned";
     // Normalize status key for checking
     const normalized = s.replace(/-/g, '_');
 
