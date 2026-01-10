@@ -77,7 +77,8 @@ const CreateCourseModal = ({ open, onClose }) => {
     <Modal open={open} onClose={onClose} closeAfterTransition>
       <Box
         sx={{
-          width: 500,
+          width: "90%",
+          maxWidth: 500,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,

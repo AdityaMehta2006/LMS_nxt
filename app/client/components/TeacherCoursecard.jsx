@@ -1,67 +1,58 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Card } from "@mui/material";
+import { Card } from "@mui/material"; // Keeping wrapper if needed, or replacing with div
 import { BookOpen, Layers } from "lucide-react";
-
+import { cn } from "@/lib/utils";
 
 const TeacherCoursecard = ({ id, courseId, Course, unitCount, topicCount }) => {
   const router = useRouter();
+
   return (
-    <Card className="h-full w-full">
-      <div className="bg-white border-l-4 border-t-2 border-r-2 border-b-2 border-r-gray-200 border-t-gray-200 border-b-gray-200 border-blue-500 h-full text-black p-4 rounded-lg flex flex-col w-full">
+    <div
+      onClick={() => router.push(`/teachers/courses/${id}`)}
+      className={cn(
+        "group cursor-pointer relative flex flex-col justify-between",
+        "h-full w-full p-5 rounded-2xl",
+        "bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700",
+        "shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+      )}
+    >
+      {/* Decorative Top Accent */}
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl" />
 
-        {/* CONTENT */}
-        <div className="grow">
-          <div className="flex justify-between items-start">
-            <h2 className="text-2xl mt-2 text-black line-clamp-3 flex-1">{Course}</h2>
-          </div>
-          <h3 className="font-bold text-blue-500 border-2 w-max p-1 rounded-3xl my-2 bg-blue-200/40 border-blue-500 text-sm">{courseId}</h3>
-          {/* Cards */}
-          <div className="mt-4">
-            <div className="flex gap-3 w-full">
-              {/* Units Card */}
-              <div
-                className="flex-1 rounded-xl p-3 border text-gray-700 h-16 flex flex-col justify-center"
-                style={{
-                  background: "#EEF7FF",
-                  borderColor: "#CDE5FF",
-                }}
-              >
-                <div className="flex items-center gap-2 text-xs font-medium">
-                  <Layers size={14} />
-                  Units
-                </div>
-                <p className="text-xl font-semibold">{unitCount || 0}</p>
-              </div>
+      {/* HEADER */}
+      <div className="pt-2">
+        <span className="inline-block px-2.5 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-xs font-semibold text-violet-600 dark:text-violet-300 mb-3 border border-violet-100 dark:border-violet-800">
+          {courseId}
+        </span>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-tight group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
+          {Course}
+        </h2>
+      </div>
 
-              {/* Topics Card */}
-              <div
-                className="flex-1 rounded-xl p-3 border text-gray-700 h-16 flex flex-col justify-center"
-                style={{
-                  background: "#FFF4FA",
-                  borderColor: "#FFD9EC",
-                }}
-              >
-                <div className="flex items-center gap-2 text-xs font-medium">
-                  <BookOpen size={14} />
-                  Topics
-                </div>
-                <p className="text-xl font-semibold">{topicCount || 0}</p>
-              </div>
-            </div>
+      {/* STATS ROW */}
+      <div className="mt-8 flex items-center gap-4 pt-4 border-t border-gray-50 dark:border-gray-700/50">
+        {/* Units */}
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/30 group-hover:bg-violet-50 dark:group-hover:bg-violet-900/20 transition-colors">
+          <Layers size={18} className="text-gray-400 dark:text-gray-500 group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors" />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-none">{unitCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 leading-none mt-0.5">Units</span>
           </div>
         </div>
 
-        {/* BUTTON AREA (Right Bottom) */}
-        <div className="flex justify-end mt-4">
-          <button className="rounded-lg text-white bg-gray-800 py-2 px-2 w-30 text-center" onClick={() => router.push(`/teachers/courses/${id}`)}>
-            Learn More
-          </button>
+        {/* Topics */}
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700/30 group-hover:bg-fuchsia-50 dark:group-hover:bg-fuchsia-900/20 transition-colors">
+          <BookOpen size={18} className="text-gray-400 dark:text-gray-500 group-hover:text-fuchsia-500 dark:group-hover:text-fuchsia-400 transition-colors" />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-none">{topicCount || 0}</span>
+            <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 leading-none mt-0.5">Topics</span>
+          </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
