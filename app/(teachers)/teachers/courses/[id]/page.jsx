@@ -247,46 +247,48 @@ export default function CourseStructureDesign() {
     }
   };
 
-  if (loading) return <p className="p-8">Loading...</p>;
-  if (error) return <p className="p-8 text-red-500">Error: {error}</p>;
-  if (!course) return <p className="p-8">Course not found</p>;
-
-  const getAllTopics = () => {
-    return course.units ? course.units.flatMap((u) => u.topics || []) : [];
+  const handleDownloadFile = (topic, type) => {
+    const url = `/api/download/script?topicId=${topic.content_id}&type=${type}`;
+    window.open(url, '_blank');
   };
 
+  if (loading) return <div className="flex justify-center items-center h-screen"><p className="text-gray-500">Loading course data...</p></div>;
+  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (!course) return <div className="p-8 text-center">Course not found</div>;
+
   const userRole = course.userRole;
-  // Robust check for TA/Teacher role to enable features
   const canApprove = ['teaching assistant', 'teacher assistant', 'publisher'].includes(userRole?.toLowerCase());
-  const canOverwrite = canApprove;
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div>
-        <Button variant="outlined" onClick={handleBack}>← Back to Courses</Button>
+    <div className="min-h-screen bg-transparent p-6 pb-20">
+
+      {/* 1. Header with Stats */}
+      <CourseHeader
+        course={course}
+        onBack={handleBack}
+      />
+
+      {/* 2. Main Content / Timeline */}
+      <div className="mt-12">
+        <div className="max-w-5xl mx-auto flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Course Journey
+          </h2>
+        </div>
+
+        <TopicTimeline
+          units={course.units}
+          userRole={course.userRole}
+          onAddUnit={() => setOpenUnitModal(true)}
+          onAddTopic={(unitId) => handleOpenTopicModal(unitId)}
+          onOpenScriptModal={handleOpenScriptModal}
+          onOpenReviewModal={handleOpenReviewModal}
+          onDeleteTopic={handleDeleteTopic}
+          onApproveTopic={handleApprove}
+          onApproveScript={handleApproveScript}
+          onDownload={handleDownloadFile}
+        />
       </div>
-
-      {/* Course Info */}
-      <Card>
-        <CardHeader
-          title={
-            <span className="text-2xl">
-              {course.name || course.course_name}
-            </span>
-          }
-          subheader={`${course.department || "Department"} • ${course.program || "Program"
-            } • ${course.units ? course.units.length : 0} units • ${getAllTopics().length
-            } topics`}
-        />
-      </Card>
-
-      {/* Course Structure */}
-      <Card>
-        <CardHeader
-          title="Course Structure"
-          subheader="Manage units and topics for this course"
-        />
 
         <CardContent>
           <div className="space-y-4">
@@ -609,14 +611,13 @@ export default function CourseStructureDesign() {
       <Createunitmodal
         open={openUnitModal}
         onClose={() => setOpenUnitModal(false)}
-        courseId={params.id} // Pass the courseId
+        courseId={params.id}
       />
 
       <CreateTopicmodal
         open={openTopicModal}
         onClose={() => setOpenTopicModal(false)}
-        unitId={currentUnitId} // Pass unitId
-      // Note: You must update CreateTopicmodal to accept and use this 'unitId' prop
+        unitId={currentUnitId}
       />
 
       <ScriptDialogue
@@ -626,39 +627,13 @@ export default function CourseStructureDesign() {
         onUploadSuccess={fetchCourse}
       />
 
-      {/* Download Menu */}
-      <Menu
-        anchorEl={downloadAnchorEl}
-        open={Boolean(downloadAnchorEl)}
-        onClose={handleDownloadMenuClose}
-      >
-        <MenuItem
-          onClick={() => downloadFile('ppt')}
-          disabled={!activeDownloadTopic?.script?.ppt}
-        >
-          Download PPT
-        </MenuItem>
-        <MenuItem
-          onClick={() => downloadFile('doc')}
-          disabled={!activeDownloadTopic?.script?.doc}
-        >
-          Download Doc/PDF
-        </MenuItem>
-        <MenuItem
-          onClick={() => downloadFile('zip')}
-          disabled={!activeDownloadTopic?.script?.zip}
-        >
-          Download Zip/Other
-        </MenuItem>
-      </Menu>
-
       <ReviewDialogue
         open={openReviewModal}
         onClose={() => setOpenReviewModal(false)}
         topic={currentTopic}
         onFeedbackSubmit={handleFeedbackSubmit}
         onApprove={handleApprove}
-        canApprove={canApprove} // Pass prop
+        canApprove={canApprove}
       />
     </div>
   );

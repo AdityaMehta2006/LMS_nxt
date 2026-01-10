@@ -39,15 +39,17 @@ export default function ReviewDialogue({ open, onClose, topic, onFeedbackSubmit,
             <DialogContent>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 1 }}>
                     {/* Video Section */}
+                    {/* Video Section */}
                     <Box
                         sx={{
                             p: 2,
-                            border: "1px solid #e5e7eb",
+                            border: "1px solid",
+                            borderColor: "divider",
                             borderRadius: 2,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            bgcolor: "#f9fafb",
+                            bgcolor: "background.paper", // use theme background
                         }}
                     >
                         <Box>
@@ -74,12 +76,13 @@ export default function ReviewDialogue({ open, onClose, topic, onFeedbackSubmit,
                         <Box
                             sx={{
                                 p: 2,
-                                border: "1px solid #e5e7eb",
+                                border: "1px solid",
+                                borderColor: "divider",
                                 borderRadius: 2,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
-                                bgcolor: "#f9fafb",
+                                bgcolor: "background.paper",
                             }}
                         >
                             <Box>

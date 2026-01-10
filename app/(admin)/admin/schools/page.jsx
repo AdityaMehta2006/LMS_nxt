@@ -35,24 +35,24 @@ function Schools() {
                     <Typography
                         variant="h3"
                         component="h1"
-                        className="text-5xl font-bold text-gray-800"
+                        className="text-5xl font-bold text-gray-800 dark:text-white"
                     >
                         Schools / Departments
                     </Typography>
                     <button
-                        className="border-2 font-bold text-xl bg-black text-white px-4 py-2 rounded-2xl hover:bg-gray-800 transition"
+                        className="border-2 font-bold text-xl bg-black dark:bg-blue-600 dark:border-blue-600 text-white px-4 py-2 rounded-2xl hover:bg-gray-800 dark:hover:bg-blue-700 transition"
                         onClick={() => setOpen(true)}
                     >
                         + Add School
                     </button>
                     <CreateSchoolModal open={open} onClose={() => setOpen(false)} />
                 </div>
-                <Typography variant="subtitle1" className="text-gray-600 mb-6">
+                <Typography variant="subtitle1" className="text-gray-600 dark:text-gray-400 mb-6">
                     Manage the various Schools and Departments within the institution.
                 </Typography>
             </Box>
 
-            <div className="w-full text-black p-5">
+            <div className="w-full text-black dark:text-white p-5">
                 {loading ? (
                     <Typography className="text-gray-500">Loading schools…</Typography>
                 ) : (
@@ -64,20 +64,21 @@ function Schools() {
                                         sx={{
                                             borderRadius: "16px",
                                             boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                                            border: '1px solid #2563eb',
                                             height: "100%",
                                             transition: "transform 0.2s",
+                                            bgcolor: 'background.paper',
+                                            border: 1,
+                                            borderColor: 'divider',
                                             "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 16px rgba(0,0,0,0.1)" }
                                         }}
                                     >
                                         <CardContent className="flex flex-col items-center p-6 text-center gap-4">
-                                            <div className="p-3 bg-blue-50 rounded-full">
-                                                <SchoolIcon sx={{ fontSize: 40, color: "#2563eb" }} />
+                                            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+                                                <SchoolIcon sx={{ fontSize: 40 }} className="text-blue-600 dark:text-blue-400" />
                                             </div>
-                                            <Typography variant="h6" fontWeight="bold">
+                                            <Typography variant="h6" fontWeight="bold" className="text-gray-900 dark:text-white">
                                                 {school.name}
                                             </Typography>
-
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -93,7 +94,7 @@ function Schools() {
                         )}
                     </div>
                 )}
-            </div>
+            </div >
         </>
     );
 }

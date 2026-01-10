@@ -3,6 +3,37 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export async function GET() {
+    try {
+        const assignments = await prisma.userCourseAssignment.findMany({
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        role: true
+                    }
+                },
+                course: {
+                    select: {
+                        id: true,
+                        title: true,
+                        courseCode: true,
+                        program: { select: { programName: true } }
+                    }
+                }
+            },
+            orderBy: { id: 'desc' }
+        });
+        return NextResponse.json(assignments);
+    } catch (error) {
+        console.error("Error fetching assignments:", error);
+        return new NextResponse("Internal Server Error", { status: 500 });
+    }
+}
+
 export async function POST(req) {
     try {
         let { userId, courseId, email } = await req.json();
@@ -17,6 +48,23 @@ export async function POST(req) {
                 return new NextResponse("User not found", { status: 404 });
             }
             userId = user.id;
+        }
+
+        // Verify User Role
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+            include: { role: true }
+        });
+
+        if (!user) {
+            return new NextResponse("User not found", { status: 404 });
+        }
+
+        const allowedRoles = ['teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher', 'admin'];
+        const userRole = user.role?.roleName?.toLowerCase().trim();
+
+        if (!userRole || !allowedRoles.includes(userRole)) {
+            return new NextResponse(`Invalid user role (${user.role?.roleName}). Only Teachers, TAs, Editors, Publishers, or Admins can be assigned.`, { status: 400 });
         }
 
         // Check if assignment exists
