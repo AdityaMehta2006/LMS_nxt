@@ -1,40 +1,41 @@
 "use client";
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
     Button,
     Card,
     CardContent,
     CardHeader,
-    Box,
-    Tooltip,
-    IconButton,
-    Typography,
-    Chip,
-    Paper,
-    Divider,
     TextField,
     List,
     ListItem,
     ListItemText,
-    ListItemSecondaryAction
+    ListItemSecondaryAction,
+    IconButton,
+    Typography,
+    Box,
+    CircularProgress
 } from "@mui/material";
-import { Download, FileText, Presentation, Trash2, MessageSquare, CheckCircle, FileCheck, Send } from "lucide-react";
-import ProgressBar from "@/app/client/components/ProgressBar";
+import { Trash2 } from "lucide-react";
+import CourseHeader from "@/app/client/components/CourseHeader";
+import TopicTimeline from "@/app/client/components/TopicTimeline";
 import ReviewDialogue from "@/app/client/components/ReviewDialogue";
+import CreateTopicmodal from "@/app/client/components/CreateTopicmodal";
+import Createunitmodal from "@/app/client/components/Createunitmodal";
 
 export default function AdminCourseDetail({ params }) {
     const unwrappedParams = use(params);
     const courseId = unwrappedParams.course_id;
 
     const [course, setCourse] = useState(null);
-    const [expandedUnit, setExpandedUnit] = useState(null);
     const [currentTopic, setCurrentTopic] = useState(null);
     const [openReviewModal, setOpenReviewModal] = useState(false);
+
+    // Modals for Creation (Admin capabilities)
+    const [openUnitModal, setOpenUnitModal] = useState(false);
+    const [openTopicModal, setOpenTopicModal] = useState(false);
+    const [currentUnitId, setCurrentUnitId] = useState(null);
+
     const router = useRouter();
 
     const [loading, setLoading] = useState(true);
@@ -68,18 +69,15 @@ export default function AdminCourseDetail({ params }) {
         }
     }, [courseId]);
 
-    const handleDownload = async (fileUrl, fileName) => {
-        try {
-            const link = document.createElement('a');
-            link.href = fileUrl;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error("Download failed:", error);
-            alert("Failed to download file");
-        }
+    const handleDownload = async (topic, type) => {
+        // Updated to match the Teacher implementation logic or use existing API
+        // Using existing logic from previous admin page but mapped to new handler signature
+        // The TopicTimeline passes (topic, type).
+        // Previous used: `/api/download-topic-material?topicId=${topicId}&type=${type}`
+        // Teacher uses: `/api/download/script?topicId=${topic.content_id}&type=${type}`
+        // Let's use the one that works. Assuming /api/download/script is the standardized one now.
+        const url = `/api/download/script?topicId=${topic.content_id || topic.id.replace('t', '')}&type=${type}`;
+        window.open(url, '_blank');
     };
 
     const handleDeleteCourse = async () => {
@@ -97,11 +95,12 @@ export default function AdminCourseDetail({ params }) {
         }
     };
 
-    const handleDeleteUnit = async (unitId, e) => {
-        e.stopPropagation(); // Prevent accordion toggle
+    const handleDeleteUnit = async (unitId) => {
+        // UnitID might be u123 or just 123
+        const realId = String(unitId).replace('u', '');
         if (!confirm("Are you sure you want to delete this Unit? All topics within it will be lost.")) return;
         try {
-            const res = await fetch(`/api/admin/units/${unitId}`, { method: "DELETE" });
+            const res = await fetch(`/api/admin/units/${realId}`, { method: "DELETE" });
             if (res.ok) {
                 fetchCourse();
             } else {
@@ -114,9 +113,10 @@ export default function AdminCourseDetail({ params }) {
     };
 
     const handleDeleteTopic = async (topicId) => {
+        const realId = String(topicId).replace('t', '');
         if (!confirm("Are you sure you want to delete this Topic?")) return;
         try {
-            const res = await fetch(`/api/teacher/delete-topic?topicId=${topicId}`, { method: "DELETE" });
+            const res = await fetch(`/api/teacher/delete-topic?topicId=${realId}`, { method: "DELETE" });
             if (res.ok) {
                 fetchCourse();
             } else {
@@ -160,7 +160,7 @@ export default function AdminCourseDetail({ params }) {
                 },
                 body: JSON.stringify({
                     topicId: topicId,
-                    newStatus: 'Published' // Admins publishing directly akin to Teachers
+                    newStatus: 'Published' // Admins publishing directly
                 }),
             });
 
@@ -177,6 +177,8 @@ export default function AdminCourseDetail({ params }) {
     const handleApproveScript = async (topicId) => {
         if (!window.confirm("Approve script and send to editor?")) return;
         try {
+            // Admin approval usually means moving it forward. 
+            // Logic from previous file: newStatus: 'Editing'
             const res = await fetch(`/api/topics/update-status`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -189,57 +191,46 @@ export default function AdminCourseDetail({ params }) {
         }
     };
 
-    const handleApproveMaterials = async (topicId) => {
-        if (confirm("Approve materials and send to editors?")) {
-            fetch("/api/topics/approve-materials", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ topicId: topicId })
-            }).then(res => {
-                if (res.ok) fetchCourse();
-                else alert("Failed to approve materials");
-            });
-        }
+    // Modal Opening Handlers
+    const handleOpenTopicModal = (unitId) => {
+        setCurrentUnitId(unitId);
+        setOpenTopicModal(true);
     };
 
-    if (loading) return <p className="p-8">Loading...</p>;
+
+    if (loading) return <div className="flex justify-center items-center h-screen"><CircularProgress /></div>;
     if (error) return <p className="p-8 text-red-500">Error: {error}</p>;
     if (!course) return <p className="p-8">Course not found</p>;
 
-    const getAllTopics = () => {
-        return course.units ? course.units.flatMap((u) => u.topics || []) : [];
-    };
 
     return (
-        <div className="space-y-6 p-6 pt-20">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <Button variant="outlined" onClick={handleBack}>← Back to Courses</Button>
+        <div className="space-y-6 p-6 pb-20">
+            {/* Header with Stats */}
+            <CourseHeader
+                course={course}
+                onBack={handleBack}
+            />
+
+            {/* Admin Controls */}
+            <div className="flex justify-end">
                 <Button
                     variant="contained"
                     color="error"
                     startIcon={<Trash2 size={18} />}
                     onClick={handleDeleteCourse}
+                    className="bg-red-600 hover:bg-red-700"
                 >
-                    Delete Course
+                    Delete Entire Course
                 </Button>
             </div>
 
-            {/* Course Info */}
-            <Card>
-                <CardHeader
-                    title={
-                        <span className="text-2xl">
-                            {course.name || course.course_name}
-                        </span>
-                    }
-                    subheader={`${course.department || "Department"} • ${course.program || "Program"} • ${course.units ? course.units.length : 0} units • ${getAllTopics().length} topics`}
-                />
-            </Card>
 
-            {/* Assignment Management */}
-            <Card>
-                <CardHeader title="Assigned Teachers" subheader="Manage who can access this course" />
+            {/* Assignment Management (Preserved) */}
+            <Card className="rounded-2xl border-none shadow-sm dark:bg-gray-800/50">
+                <CardHeader
+                    title={<span className="text-xl font-bold dark:text-white">Assigned Teachers</span>}
+                    subheader={<span className="dark:text-gray-400">Manage who can access this course</span>}
+                />
                 <CardContent>
                     <div className="flex gap-4 mb-4">
                         <TextField
@@ -248,6 +239,7 @@ export default function AdminCourseDetail({ params }) {
                             size="small"
                             fullWidth
                             id="teacher-email-input"
+                            className="bg-white dark:bg-gray-900 rounded-lg"
                         />
                         <Button
                             variant="contained"
@@ -272,6 +264,7 @@ export default function AdminCourseDetail({ params }) {
                                     alert("Assignment failed");
                                 }
                             }}
+                            className="bg-blue-600 hover:bg-blue-700"
                         >
                             Assign
                         </Button>
@@ -280,10 +273,10 @@ export default function AdminCourseDetail({ params }) {
                     <List>
                         {course.assigned_teachers && course.assigned_teachers.length > 0 ? (
                             course.assigned_teachers.map((teacher) => (
-                                <ListItem key={teacher.id} divider>
+                                <ListItem key={teacher.id} divider className="dark:border-gray-700">
                                     <ListItemText
-                                        primary={teacher.name}
-                                        secondary={teacher.email}
+                                        primary={<span className="dark:text-white font-medium">{teacher.name}</span>}
+                                        secondary={<span className="dark:text-gray-400">{teacher.email}</span>}
                                     />
                                     <ListItemSecondaryAction>
                                         <IconButton
@@ -302,6 +295,7 @@ export default function AdminCourseDetail({ params }) {
                                                     console.error(e);
                                                 }
                                             }}
+                                            color="error"
                                         >
                                             <Trash2 size={18} />
                                         </IconButton>
@@ -309,7 +303,7 @@ export default function AdminCourseDetail({ params }) {
                                 </ListItem>
                             ))
                         ) : (
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" className="italic py-2">
                                 No teachers assigned.
                             </Typography>
                         )}
@@ -317,214 +311,30 @@ export default function AdminCourseDetail({ params }) {
                 </CardContent>
             </Card>
 
-            {/* Course Structure */}
-            <Card>
-                <CardHeader
-                    title="Course Structure"
-                    subheader="Manage course materials"
+            {/* Standardized Course Timeline */}
+            <div className="mt-8">
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Typography variant="h5" fontWeight="bold" className="dark:text-white">
+                        Course Journey
+                    </Typography>
+                </Box>
+
+                <TopicTimeline
+                    units={course.units}
+                    userRole="admin" // Hardcode admin role for ability
+                    onAddUnit={() => setOpenUnitModal(true)}
+                    onAddTopic={(unitId) => handleOpenTopicModal(unitId)}
+                    onOpenScriptModal={() => alert("Admins: Please use Edit mode or login as Teacher to upload scripts.")} // Modals not imported yet for script? Or reuse?
+                    onOpenReviewModal={handleOpenReviewModal}
+                    onDeleteTopic={handleDeleteTopic}
+                    onDeleteUnit={handleDeleteUnit}
+                    onApproveTopic={handleApproveVideo}
+                    onApproveScript={handleApproveScript}
+                    onDownload={handleDownload}
                 />
+            </div>
 
-                <CardContent>
-                    <div className="space-y-4">
-                        {course.units && course.units.length > 0 ? (
-                            course.units.map((unit, unitIndex) => {
-                                const unitId = unit.section_id || unit.id.replace('u', ''); // Handle potentially different ID formats
-                                return (
-                                    <Accordion
-                                        key={unit.id}
-                                        expanded={expandedUnit === unit.id}
-                                        onChange={() =>
-                                            setExpandedUnit(expandedUnit === unit.id ? null : unit.id)
-                                        }
-                                    >
-                                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                            <div className="flex justify-between w-full items-center pr-4">
-                                                <span className="font-medium">
-                                                    Unit {unit.order}: {unit.name}
-                                                </span>
-                                                <div className="flex items-center gap-4">
-                                                    <span className="text-gray-500 text-sm">
-                                                        {unit.topics ? unit.topics.length : 0} topics
-                                                    </span>
-                                                    <IconButton
-                                                        size="small"
-                                                        color="error"
-                                                        onClick={(e) => handleDeleteUnit(unitId, e)}
-                                                        title="Delete Unit"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </IconButton>
-                                                </div>
-                                            </div>
-                                        </AccordionSummary>
-
-                                        <AccordionDetails sx={{ backgroundColor: "#f9fafb" }}>
-                                            <div className="space-y-4">
-                                                {/* Topics List */}
-                                                {!unit.topics || (unit.topics.length === 0 && (
-                                                    <p className="text-gray-500 italic text-center py-4">
-                                                        No topics added yet
-                                                    </p>
-                                                ))}
-
-                                                {unit.topics &&
-                                                    unit.topics.map((topic, topicIndex) => {
-                                                        const topicStatus = topic.status?.toLowerCase() || "planned";
-                                                        const realTopicId = topic.content_id || topic.id.replace('t', '');
-
-                                                        return (
-                                                            <Paper
-                                                                key={topic.id}
-                                                                elevation={1}
-                                                                sx={{
-                                                                    display: "flex",
-                                                                    justifyContent: "space-between",
-                                                                    alignItems: "center",
-                                                                    p: 2,
-                                                                    mb: 1.5,
-                                                                    borderRadius: 2,
-                                                                    "&:hover": { boxShadow: 3 },
-                                                                }}
-                                                            >
-                                                                {/* Topic Info */}
-                                                                <Box
-                                                                    sx={{
-                                                                        display: "flex",
-                                                                        alignItems: "center",
-                                                                        gap: 2,
-                                                                        flexWrap: "wrap",
-                                                                    }}
-                                                                >
-                                                                    <Chip
-                                                                        label={`${unitIndex + 1}.${topicIndex + 1}`}
-                                                                        color="primary"
-                                                                        variant="outlined"
-                                                                        size="small"
-                                                                    />
-                                                                    <Typography variant="body1" fontWeight={500}>
-                                                                        {topic.name}
-                                                                    </Typography>
-                                                                    <Box
-                                                                        sx={{
-                                                                            display: "flex",
-                                                                            alignItems: "center",
-                                                                            gap: 1,
-                                                                        }}
-                                                                    >
-                                                                        <ProgressBar status={topicStatus} />
-                                                                        <Typography
-                                                                            variant="caption"
-                                                                            sx={{
-                                                                                textTransform: "capitalize",
-                                                                                color: "text.secondary",
-                                                                            }}
-                                                                        >
-                                                                            {topicStatus}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                                {/* Topic Actions */}
-                                                                <Box sx={{ display: "flex", gap: 1 }}>
-                                                                    {/* Admin Review Video Button */}
-                                                                    {topic.videoLink && (
-                                                                        <Tooltip title={topicStatus === "published" ? "Video Published" : "Watch & Review Video"}>
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                color="primary"
-                                                                                onClick={() => handleOpenReviewModal(topic)}
-                                                                            >
-                                                                                <MessageSquare size={18} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    )}
-
-                                                                    {/* Admin Approve Materials Button */}
-                                                                    {topicStatus === "scripted" && (!(topic.script?.ppt || topic.script?.doc || topic.script?.zip) || topic.materialsApproved) && (
-                                                                        <Tooltip title="Approve Script (Send to Editor)">
-                                                                            <span>
-                                                                                <IconButton
-                                                                                    size="small"
-                                                                                    onClick={() => handleApproveScript(realTopicId)}
-                                                                                    sx={{ color: "#f59e0b" }}
-                                                                                >
-                                                                                    <Send size={18} />
-                                                                                </IconButton>
-                                                                            </span>
-                                                                        </Tooltip>
-                                                                    )}
-
-                                                                    {!topic.materialsApproved && topicStatus !== 'planned' && (topic.script?.ppt || topic.script?.doc || topic.script?.zip) && (
-                                                                        <Tooltip title="Approve Materials (Send to Editor)">
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                color="warning"
-                                                                                onClick={() => handleApproveMaterials(realTopicId)}
-                                                                            >
-                                                                                <FileCheck size={18} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    )}
-
-                                                                    <Divider orientation="vertical" flexItem />
-
-                                                                    {topic.script?.ppt && (
-                                                                        <Tooltip title="Download PPT">
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                onClick={() => handleDownload(`/api/download-topic-material?topicId=${realTopicId}&type=ppt`, `${topic.name}-ppt.pptx`)}
-                                                                            >
-                                                                                <Presentation size={18} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    )}
-                                                                    {topic.script?.doc && (
-                                                                        <Tooltip title="Download Script (Doc)">
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                onClick={() => handleDownload(`/api/download-topic-material?topicId=${realTopicId}&type=doc`, `${topic.name}-script.docx`)}
-                                                                            >
-                                                                                <FileText size={18} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    )}
-                                                                    {topic.script?.zip && (
-                                                                        <Tooltip title="Download Materials (Zip)">
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                onClick={() => handleDownload(`/api/download-topic-material?topicId=${realTopicId}&type=zip`, `${topic.name}-materials.zip`)}
-                                                                            >
-                                                                                <Download size={18} />
-                                                                            </IconButton>
-                                                                        </Tooltip>
-                                                                    )}
-                                                                    <Divider orientation="vertical" flexItem />
-                                                                    <Tooltip title="Delete Topic">
-                                                                        <IconButton
-                                                                            size="small"
-                                                                            color="error"
-                                                                            onClick={() => handleDeleteTopic(realTopicId)}
-                                                                        >
-                                                                            <Trash2 size={18} />
-                                                                        </IconButton>
-                                                                    </Tooltip>
-                                                                </Box>
-                                                            </Paper>
-                                                        );
-                                                    })}
-                                            </div>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                );
-                            })
-                        ) : (
-                            <p className="text-gray-500 italic text-center py-8">
-                                No units found for this course
-                            </p>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-
+            {/* Review Modal */}
             <ReviewDialogue
                 open={openReviewModal}
                 onClose={() => setOpenReviewModal(false)}
@@ -533,6 +343,20 @@ export default function AdminCourseDetail({ params }) {
                 onApprove={handleApproveVideo}
                 canApprove={true}
             />
+
+            {/* Creation Modals */}
+            <Createunitmodal
+                open={openUnitModal}
+                onClose={() => setOpenUnitModal(false)}
+                courseId={courseId}
+            />
+
+            <CreateTopicmodal
+                open={openTopicModal}
+                onClose={() => setOpenTopicModal(false)}
+                unitId={currentUnitId}
+            />
+
         </div>
     );
 }

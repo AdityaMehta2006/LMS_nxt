@@ -142,7 +142,7 @@ export async function GET(req) {
     }
 
     // List courses assigned to the user (unless Admin/Editor)
-    const isRestricted = ['Teacher', 'Teaching Assistant', 'Teacher Assistant'].includes(userRole);
+    const isRestricted = ['teacher', 'teaching assistant', 'teacher assistant'].includes(userRole.toLowerCase());
 
     const courses = await prisma.course.findMany({
       where: {

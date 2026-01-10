@@ -74,6 +74,7 @@ export default function TopicTimeline({
     onApproveTopic,
     onApproveScript,
     onDownload,
+    onDeleteUnit, // New prop
     readOnly = false
 }) {
 
@@ -164,6 +165,21 @@ export default function TopicTimeline({
                             <IconButton size="small" className="text-gray-400">
                                 {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                             </IconButton>
+
+                            {/* Admin: Delete Unit */}
+                            {onDeleteUnit && (
+                                <IconButton
+                                    size="small"
+                                    color="error"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteUnit(unit.section_id || unit.id);
+                                    }}
+                                    className="ml-2"
+                                >
+                                    <Trash size={18} />
+                                </IconButton>
+                            )}
 
                             {!readOnly && (
                                 <Button
