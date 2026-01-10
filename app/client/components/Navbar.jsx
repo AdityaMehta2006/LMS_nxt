@@ -34,18 +34,14 @@ const Nav = () => {
     }
   }, []);
 
-  function signOut() {
+  async function signOut() {
     try {
-      // clear persisted user data
+      await fetch('/api/auth/logout', { method: 'POST' });
       localStorage.removeItem('lms_user');
-      // optionally clear other tokens
       localStorage.removeItem('lms_token');
     } catch (err) {
-      console.warn('Failed to clear localStorage during sign out', err);
+      console.warn('Failed to sign out', err);
     }
-
-    // do a hard redirect to ensure all client state + app cache is cleared
-    // (router.push + reload previously caused inconsistencies on some clients)
     window.location.href = '/login';
   }
   return (

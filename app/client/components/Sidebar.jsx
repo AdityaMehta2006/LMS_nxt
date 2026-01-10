@@ -99,7 +99,16 @@ const Sidebar = ({ links, role, userName, userImage, basePath }) => {
             {/* FOOTER / LOGOUT */}
             <div className="p-4 border-t border-gray-50 dark:border-gray-800 flex flex-col gap-2">
                 <button
-                    onClick={() => router.push("/login")}
+                    onClick={async () => {
+                        try {
+                            await fetch("/api/auth/logout", { method: "POST" });
+                            router.push("/login");
+                            router.refresh();
+                        } catch (e) {
+                            console.error("Logout failed", e);
+                            router.push("/login");
+                        }
+                    }}
                     title={collapsed ? "Sign Out" : ""}
                     className={cn(
                         "w-full flex items-center gap-2 text-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 rounded-xl transition-colors font-medium text-sm",
