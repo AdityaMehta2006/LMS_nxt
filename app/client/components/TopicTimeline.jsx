@@ -39,20 +39,29 @@ const getUnitDuration = (topics) => {
 // Map status to colors and icons
 const getStatusConfig = (status) => {
     const s = status?.toLowerCase() || "planned";
-    switch (s) {
-        case "published":
-            return { color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20", icon: <CheckCircle size={16} />, label: "Published" };
-        case "approved":
-            return { color: "text-blue-500 bg-blue-500/10 border-blue-500/20", icon: <CheckCircle size={16} />, label: "Approved" };
-        case "under_review":
-            return { color: "text-amber-500 bg-amber-500/10 border-amber-500/20", icon: <Clock size={16} />, label: "Under Review" };
-        case "scripted":
-            return { color: "text-purple-500 bg-purple-500/10 border-purple-500/20", icon: <FileCheck size={16} />, label: "Scripted" };
-        case "editing":
-            return { color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20", icon: <PlayCircle size={16} />, label: "Editing" };
-        default:
-            return { color: "text-gray-400 bg-gray-500/10 border-gray-500/20", icon: <Circle size={16} />, label: "Planned" };
-    }
+    const s = status?.toLowerCase() || "planned";
+    // Normalize status key for checking
+    const normalized = s.replace(/-/g, '_');
+
+    if (normalized === 'published')
+        return { color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20", icon: <CheckCircle size={16} />, label: "Published" };
+
+    if (normalized === 'approved')
+        return { color: "text-blue-500 bg-blue-500/10 border-blue-500/20", icon: <CheckCircle size={16} />, label: "Approved" };
+
+    if (normalized === 'under_review')
+        return { color: "text-amber-500 bg-amber-500/10 border-amber-500/20", icon: <Clock size={16} />, label: "Under Review" };
+
+    if (normalized === 'readyforvideoprep' || normalized === 'ready_for_video_prep')
+        return { color: "text-cyan-500 bg-cyan-500/10 border-cyan-500/20", icon: <PlayCircle size={16} />, label: "Ready for Video" };
+
+    if (normalized === 'scripted')
+        return { color: "text-purple-500 bg-purple-500/10 border-purple-500/20", icon: <FileCheck size={16} />, label: "Scripted" };
+
+    if (normalized === 'editing' || normalized === 'post_editing')
+        return { color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20", icon: <PlayCircle size={16} />, label: "Editing" };
+
+    return { color: "text-gray-400 bg-gray-500/10 border-gray-500/20", icon: <Circle size={16} />, label: "Planned" };
 };
 
 export default function TopicTimeline({
@@ -204,6 +213,43 @@ export default function TopicTimeline({
                                                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 truncate pr-4">
                                                         {topic.name}
                                                     </h4>
+
+                                                    {/* Workflow Progress Bar */}
+                                                    <div className="flex gap-1 mt-2 mb-1 w-32 h-1.5 bg-gray-100 dark:bg-gray-700/50 rounded-full overflow-hidden">
+                                                        {/* Status Order: Planned -> Scripted -> Editing -> Post-Editing -> Ready/Under_Review -> Approved -> Published */}
+                                                        {/* We simplify for visualization: 4 segments */}
+                                                        {(() => {
+                                                            const s = topic.status?.toLowerCase() || 'planned';
+                                                            const normalized = s.replace(/-/g, '_');
+
+                                                            const levels = {
+                                                                'planned': 0,
+                                                                'scripted': 1,
+                                                                'editing': 2,
+                                                                'post_editing': 2,
+                                                                'ready_for_video_prep': 3,
+                                                                'readyforvideoprep': 3,
+                                                                'under_review': 3,
+                                                                'approved': 3,
+                                                                'published': 4
+                                                            };
+                                                            const currentLevel = levels[normalized] || 0;
+                                                            return Array.from({ length: 4 }).map((_, i) => (
+                                                                <div
+                                                                    key={i}
+                                                                    className={cn(
+                                                                        "h-full flex-1 rounded-full opacity-80",
+                                                                        i < currentLevel
+                                                                            ? "bg-blue-500" // Completed steps
+                                                                            : i === currentLevel && i > 0
+                                                                                ? "bg-blue-500 animate-pulse" // Current active step (if started)
+                                                                                : "bg-gray-200 dark:bg-gray-700" // Future steps
+                                                                    )}
+                                                                />
+                                                            ));
+                                                        })()}
+                                                    </div>
+
                                                     <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mt-1">
                                                         <span className="flex items-center gap-1"><Clock size={12} /> {topic.estimatedTime || topic.estimated_duration_min || 0} min</span>
                                                         {topic.videoLink && <span className="text-blue-500 flex items-center gap-1">Video Attached</span>}

@@ -17,31 +17,8 @@ import {
 import { ExpandMore, PlayCircle, CheckCircle, Visibility } from "@mui/icons-material";
 import ReviewDialogue from "../../../client/components/ReviewDialogue";
 import { cn } from "@/lib/utils";
-
-// --- ZEN COMPONENTS ---
-
-const ZenStatsCard = ({ label, value, color, delay }) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: delay }}
-            className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 group"
-        >
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-[${color}]/5 dark:bg-[${color}]/10 rounded-full blur-3xl -mr-16 -mt-16 transition-all group-hover:bg-[${color}]/10 dark:group-hover:bg-[${color}]/20`} />
-
-            <div className="relative z-10 flex flex-col items-center justify-center h-full gap-2">
-                <span className="text-4xl font-bold text-gray-800 dark:text-white tracking-tight group-hover:scale-110 transition-transform duration-300">
-                    {value}
-                </span>
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest text-center">
-                    {label}
-                </span>
-                <div style={{ backgroundColor: color }} className="h-1 w-12 rounded-full mt-2 opacity-50 group-hover:w-24 transition-all duration-300" />
-            </div>
-        </motion.div>
-    );
-};
+import StatsCard from "@/app/client/components/StatsCard";
+import { BookOpen, Layers, Eye, CheckSquare } from "lucide-react";
 
 const TeacherDash = () => {
     const router = useRouter();
@@ -65,9 +42,12 @@ const TeacherDash = () => {
             'Planned': '#64748b',
             'Scripted': '#3b82f6',
             'Editing': '#f59e0b',
+            'Post_Editing': '#f59e0b',
             'Post-Editing': '#f59e0b',
             'Ready_for_Video_Prep': '#10b981',
+            'ReadyForVideoPrep': '#10b981',
             'Under_Review': '#8b5cf6',
+            'Approved': '#22c55e',
             'Published': '#22c55e'
         };
         return colors[status] || '#64748b';
@@ -137,23 +117,23 @@ const TeacherDash = () => {
     if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
 
     return (
-        <div className="flex flex-col gap-8 text-left">
+        <div className="flex flex-col gap-8 text-left bg-gray-50/50 dark:bg-black min-h-screen p-6 md:p-8 rounded-3xl">
             {/* HEADER */}
             <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-2 mb-2"
             >
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Overview</h1>
-                <p className="text-gray-500 dark:text-gray-400">Welcome back, here's what's happening with your courses.</p>
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Teacher Overview</h1>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Welcome back, here's what's happening with your courses.</p>
             </motion.div>
 
             {/* STATS GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <ZenStatsCard label="Total Topics" value={stats.totalTopics} color="#3b82f6" delay={0.1} />
-                <ZenStatsCard label="Total Units" value={stats.totalUnits} color="#22c55e" delay={0.2} />
-                <ZenStatsCard label="Review Pending" value={stats.videosToReview} color="#fb923c" delay={0.3} />
-                <ZenStatsCard label="Published" value={stats.videosPublished} color="#a855f7" delay={0.4} />
+                <StatsCard label="Total Topics" value={stats.totalTopics} color="#3b82f6" icon={BookOpen} delay={0.1} />
+                <StatsCard label="Total Units" value={stats.totalUnits} color="#10b981" icon={Layers} delay={0.2} />
+                <StatsCard label="Review Pending" value={stats.videosToReview} color="#fb923c" icon={Eye} delay={0.3} />
+                <StatsCard label="Published" value={stats.videosPublished} color="#8b5cf6" icon={CheckSquare} delay={0.4} />
             </div>
 
             {/* REVIEW SECTION */}

@@ -44,6 +44,8 @@ import {
 } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
+import StatsCard from "@/app/client/components/StatsCard"; // Imported shared component
+import { BookOpen, Users, FileText, CheckCircle } from "lucide-react"; // Using Lucide icons for consistency where possible
 
 // Dynamically import Recharts component with NO SSR
 const AnalyticsCharts = dynamic(
@@ -52,45 +54,12 @@ const AnalyticsCharts = dynamic(
     ssr: false,
     loading: () => (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
-        <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
+        <div className="h-80 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
+        <div className="h-80 bg-gray-50 dark:bg-gray-800 rounded-3xl animate-pulse" />
       </div>
     )
   }
 );
-
-// --- COCKPIT COMPONENTS ---
-
-const CockpitStatsCard = ({ label, value, color, icon: Icon, delay }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, delay: delay }}
-      className={`relative overflow-hidden !bg-white dark:!bg-gray-800 rounded-2xl p-6 border-l-4 shadow-sm hover:shadow-lg transition-all duration-300 group`}
-      style={{ borderLeftColor: color }}
-    >
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col gap-1">
-          <span className="text-3xl font-bold text-gray-800 dark:text-white tracking-tight leading-none">
-            {value}
-          </span>
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-400">
-            {label}
-          </span>
-        </div>
-        <div className="p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 text-gray-400 dark:text-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-gray-700 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-colors">
-          {Icon && <Icon />}
-        </div>
-      </div>
-      {/* Background Decoration */}
-      <div
-        className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full opacity-10 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: color }}
-      />
-    </motion.div>
-  );
-};
 
 const AdminDash = () => {
   const router = useRouter();
@@ -202,27 +171,30 @@ const AdminDash = () => {
   if (error) return <div className="p-4 text-red-500 bg-red-50 rounded-lg">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col gap-8 text-left">
+    <div className="flex flex-col gap-8 text-left bg-gray-50/50 dark:bg-black min-h-screen p-6 md:p-8 rounded-3xl">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-1"
         >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Admin Cockpit</h1>
-          <p className="text-gray-500 dark:text-gray-400">System overview and user management.</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Admin Cockpit</h1>
+          <p className="text-lg text-gray-500 dark:text-gray-400">System overview and user management.</p>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex gap-3">
           <Button
             variant="outlined"
             onClick={() => router.push('/admin/assign')}
             sx={{
-              borderRadius: '12px',
+              borderRadius: '16px',
               textTransform: 'none',
               fontWeight: 600,
+              padding: '10px 20px',
+              borderWidth: '2px',
+              '&:hover': { borderWidth: '2px' }
             }}
-            className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 border-2 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+            className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
           >
             Manage Assignments
           </Button>
@@ -231,10 +203,11 @@ const AdminDash = () => {
             startIcon={<PersonAdd />}
             onClick={() => setOpenUserModal(true)}
             sx={{
-              borderRadius: '12px',
+              borderRadius: '16px',
               textTransform: 'none',
               fontWeight: 600,
-              boxShadow: '0 4px 14px 0 rgba(0,0,0,0.1)',
+              padding: '10px 24px',
+              boxShadow: '0 8px 20px -4px rgba(0,0,0,0.2)',
             }}
             className="bg-black hover:bg-gray-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
           >
@@ -244,12 +217,12 @@ const AdminDash = () => {
       </div>
 
       {/* STATS GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <CockpitStatsCard label="Programs" value={stats.totalPrograms} color="#3b82f6" icon={School} delay={0.1} />
-        <CockpitStatsCard label="Topics" value={stats.totalTopics} color="#ec4899" icon={AdminPanelSettings} delay={0.2} />
-        <CockpitStatsCard label="Teachers" value={stats.totalTeachers} color="#10b981" icon={AccountCircle} delay={0.3} />
-        <CockpitStatsCard label="Editors" value={stats.totalEditors} color="#f59e0b" icon={Edit} delay={0.4} />
-        <CockpitStatsCard label="Published" value={stats.topicsPublished} color="#8b5cf6" icon={SupervisedUserCircle} delay={0.5} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        <StatsCard label="Programs" value={stats.totalPrograms} color="#3b82f6" icon={BookOpen} delay={0.1} />
+        <StatsCard label="Topics" value={stats.totalTopics} color="#ec4899" icon={FileText} delay={0.2} />
+        <StatsCard label="Teachers" value={stats.totalTeachers} color="#10b981" icon={Users} delay={0.3} />
+        <StatsCard label="Editors" value={stats.totalEditors} color="#f59e0b" icon={Edit} delay={0.4} />
+        <StatsCard label="Published" value={stats.topicsPublished} color="#8b5cf6" icon={CheckCircle} delay={0.5} />
       </div>
 
       {/* ANALYTICS CHARTS */}

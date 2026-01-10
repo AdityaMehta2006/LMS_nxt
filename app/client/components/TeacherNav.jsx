@@ -18,6 +18,16 @@ const TeacherNav = ({ userId }) => {
     setactive(value);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      router.push('/login');
+    }
+  };
+
   const router = useRouter();
   return (
     <>
@@ -57,8 +67,8 @@ const TeacherNav = ({ userId }) => {
             {/* Menu Buttons */}
             <button
               className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 1
-                  ? "bg-black text-white dark:bg-blue-600"
-                  : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                ? "bg-black text-white dark:bg-blue-600"
+                : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 }`}
               onClick={() => { isactive(1); router.push(`/teachers/dashboard?userId=${userId}`) }}
             >
@@ -67,8 +77,8 @@ const TeacherNav = ({ userId }) => {
 
             <button
               className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 2
-                  ? "bg-black text-white dark:bg-blue-600"
-                  : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                ? "bg-black text-white dark:bg-blue-600"
+                : "bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 }`}
               onClick={() => { router.push(`/teachers/courses?userId=${userId}`); isactive(2); }}
             >
@@ -78,7 +88,10 @@ const TeacherNav = ({ userId }) => {
 
           {/* SIGN OUT BUTTON AT BOTTOM */}
           <div className="mt-auto">
-            <button className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200" onClick={() => router.push('/login')}>
+            <button
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200"
+              onClick={handleSignOut}
+            >
               <LogOut size={20} /> Sign Out
             </button>
           </div>
