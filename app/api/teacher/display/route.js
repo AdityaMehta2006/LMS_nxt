@@ -55,9 +55,7 @@ export async function GET(req) {
         if (user.schoolId) {
           whereCondition.OR.push({ program: { schoolId: user.schoolId } });
         }
-          { assignments: { some: { userId: parseInt(userId) } } },
-          { program: { schoolId: user.schoolId } }
-        ];
+
         // Conditional push to avoid null schoolId error
         if (user.schoolId) {
           whereCondition.OR.push({ program: { schoolId: user.schoolId } });
@@ -164,7 +162,7 @@ export async function GET(req) {
           OR: [
             { assignments: { some: { userId: parseInt(userId) } } },
             ...(user.schoolId ? [{ program: { schoolId: user.schoolId } }] : [])
-            { program: { schoolId: user.schoolId } }
+
           ]
         }),
         ...(programId && { programId: parseInt(programId) }),
