@@ -52,6 +52,7 @@ export async function GET(req) {
         whereCondition.OR = [
           { assignments: { some: { userId: parseInt(userId) } } }
         ];
+        // Conditional push to avoid null schoolId error
         if (user.schoolId) {
           whereCondition.OR.push({ program: { schoolId: user.schoolId } });
         }
