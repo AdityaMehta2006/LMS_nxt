@@ -37,6 +37,12 @@ export async function GET(req) {
 
     const userRole = user.role?.roleName || "Teacher";
 
+    // Security: Only allow Staff roles (Admin, Teacher, TA, Editor, Publisher)
+    const allowedRoles = ['admin', 'teacher', 'teaching assistant', 'teacher assistant', 'editor', 'publisher'];
+    if (!allowedRoles.includes(userRole.toLowerCase())) {
+      return NextResponse.json({ error: "Forbidden: Access restricted to staff" }, { status: 403 });
+    }
+
     if (courseId) {
       const whereCondition = {
         id: parseInt(courseId)
@@ -44,9 +50,11 @@ export async function GET(req) {
 
       if (['Teacher', 'Teaching Assistant', 'Teacher Assistant'].includes(userRole)) {
         whereCondition.OR = [
-          { assignments: { some: { userId: parseInt(userId) } } },
-          { program: { schoolId: user.schoolId } }
+          { assignments: { some: { userId: parseInt(userId) } } }
         ];
+        if (user.schoolId) {
+          whereCondition.OR.push({ program: { schoolId: user.schoolId } });
+        }
       }
 
       const course = await prisma.course.findFirst({
@@ -101,8 +109,6 @@ export async function GET(req) {
             let hasDoc = false;
             let hasZip = false;
 
-            // We only check if contentscript entry exists at all first maybe? 
-            // Actually, checks disk directly is safer.
             if (item.contentscript) {
               const topicDir = path.join(STORAGE_PATH, item.id.toString());
               try {
@@ -150,7 +156,7 @@ export async function GET(req) {
         ...(isRestricted && {
           OR: [
             { assignments: { some: { userId: parseInt(userId) } } },
-            { program: { schoolId: user.schoolId } }
+            ...(user.schoolId ? [{ program: { schoolId: user.schoolId } }] : [])
           ]
         }),
         ...(programId && { programId: parseInt(programId) }),
