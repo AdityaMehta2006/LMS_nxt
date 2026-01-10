@@ -158,7 +158,6 @@ export async function GET(req) {
           OR: [
             { assignments: { some: { userId: parseInt(userId) } } },
             ...(user.schoolId ? [{ program: { schoolId: user.schoolId } }] : [])
-
           ]
         }),
         ...(programId && { programId: parseInt(programId) }),
