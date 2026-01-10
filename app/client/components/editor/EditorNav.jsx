@@ -32,7 +32,7 @@ const EditorNav = () => {
 
           {/* Search Box */}
           <div className="flex flex-row items-center border-2 border-gray-400 px-2 py-1 m-2 rounded-md">
-            <Search/>
+            <Search />
             <InputBase className="pl-2" placeholder="Search..." />
           </div>
         </Toolbar>
@@ -56,34 +56,31 @@ const EditorNav = () => {
 
             {/* Menu Buttons */}
             <button
-              className={`rounded-xl px-3 py-2 transition-all duration-200 ${
-                active === 1 
-                  ? "bg-black text-white" 
+              className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 1
+                  ? "bg-black text-white"
                   : "bg-white text-black hover:bg-gray-200"
-              }`}
-              onClick={() => {isactive(1); router.push(`/editor/dashboard`)}}
+                }`}
+              onClick={() => { isactive(1); router.push(`/editor/dashboard`) }}
             >
               Dashboard
             </button>
-          
+
             <button
-              className={`rounded-xl px-3 py-2 transition-all duration-200 ${
-                active === 2 
-                  ? "bg-black text-white" 
+              className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 2
+                  ? "bg-black text-white"
                   : "bg-white text-black hover:bg-gray-200"
-              }`}
-              onClick={()=>{router.push(`/editor/courses`); isactive(2);}}
+                }`}
+              onClick={() => { router.push(`/editor/courses`); isactive(2); }}
             >
               Courses
             </button>
 
-             <button
-              className={`rounded-xl px-3 py-2 transition-all duration-200 ${
-                active === 3 
-                  ? "bg-black text-white" 
+            <button
+              className={`rounded-xl px-3 py-2 transition-all duration-200 ${active === 3
+                  ? "bg-black text-white"
                   : "bg-white text-black hover:bg-gray-200"
-              }`}
-              onClick={()=>{router.push(`/editor/programs`); isactive(3);}}
+                }`}
+              onClick={() => { router.push(`/editor/programs`); isactive(3); }}
             >
               Programs
             </button>
@@ -91,7 +88,18 @@ const EditorNav = () => {
 
           {/* SIGN OUT BUTTON AT BOTTOM */}
           <div className="mt-auto">
-            <button className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200">
+            <button
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-red-500 hover:bg-red-100 transition-all duration-200"
+              onClick={async () => {
+                try {
+                  await fetch('/api/auth/logout', { method: 'POST' });
+                  router.push('/login');
+                } catch (e) {
+                  console.error("Logout failed", e);
+                  router.push('/login');
+                }
+              }}
+            >
               <LogOut size={20} /> Sign Out
             </button>
           </div>

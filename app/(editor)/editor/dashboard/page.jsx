@@ -38,32 +38,7 @@ import {
 } from "@mui/icons-material";
 import { cn } from "@/lib/utils";
 
-// --- ZEN COMPONENTS ---
-const ZenStatsCard = ({ label, value, color, bg, borderColor, delay }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: delay }}
-      className="relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 border shadow-sm hover:shadow-md transition-all duration-300 group"
-      style={{ borderColor: borderColor }} // Note: Handling inline border color properly in dark mode might tricky if strict colors are passed.
-    // Ideally, we should ignore inline border color in dark mode or replace it.
-    // But let's just add dark classes for now.
-    >
-      {/* Decorative Blur - Adjust opacity for dark mode */}
-      <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl -mr-12 -mt-12 transition-all opacity-50 dark:opacity-30" style={{ backgroundColor: bg }} />
-
-      <div className="relative z-10 flex flex-col gap-1">
-        <span className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-          {value}
-        </span>
-        <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: color }}>
-          {label}
-        </span>
-      </div>
-    </motion.div>
-  );
-};
+import StatsCard from '@/app/client/components/StatsCard';
 
 const EditorDash = () => {
   const [stats, setStats] = useState({
@@ -247,11 +222,11 @@ const EditorDash = () => {
 
       {/* STATS GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <ZenStatsCard label="Total Topics" value={stats.totalTopics} bg="#3b82f6" color="#1d4ed8" borderColor="#eff6ff" delay={0.1} />
-        <ZenStatsCard label="In Editing" value={stats.inEditing} bg="#fb923c" color="#c2410c" borderColor="#fff7ed" delay={0.2} />
-        <ZenStatsCard label="Under Review" value={stats.underReview} bg="#a855f7" color="#7e22ce" borderColor="#faf5ff" delay={0.3} />
-        <ZenStatsCard label="Approved" value={stats.approved} bg="#10b981" color="#047857" borderColor="#ecfdf5" delay={0.4} />
-        <ZenStatsCard label="Published" value={stats.published} bg="#22c55e" color="#15803d" borderColor="#f0fdf4" delay={0.5} />
+        <StatsCard label="Total Topics" value={stats.totalTopics} color="#3b82f6" icon={FolderZip} delay={0.1} />
+        <StatsCard label="In Editing" value={stats.inEditing} color="#fb923c" icon={VideoCall} delay={0.2} />
+        <StatsCard label="Under Review" value={stats.underReview} color="#a855f7" icon={Visibility} delay={0.3} />
+        <StatsCard label="Approved" value={stats.approved} color="#10b981" icon={CheckCircle} delay={0.4} />
+        <StatsCard label="Published" value={stats.published} color="#22c55e" icon={Slideshow} delay={0.5} />
       </div>
 
       {/* ACTION BAR */}
