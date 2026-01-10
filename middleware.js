@@ -3,17 +3,10 @@ import { NextResponse } from 'next/server'
 export function middleware(request) {
     const path = request.nextUrl.pathname
 
-    // Debug log (server-side)
-    // console.log(`[Middleware] Checking path: ${path}`)
-
     // 1. Define Public Paths (No Login Required)
     // explicit exact matches
     const publicPaths = ['/login', '/credits', '/api/auth/login']
 
-    // Check if current path IS a public path
-    // We allow /login, /credits, and /api/auth/login explicitly.
-    // We also want to allow static assets which are handled by the matcher config below, 
-    // but strictly checking here doesn't hurt.
     const isPublicPath = publicPaths.some(p => path === p || path.startsWith('/api/auth/login'))
 
     // 2. Check for Auth Token (userId cookie)

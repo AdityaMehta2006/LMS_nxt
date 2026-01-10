@@ -28,7 +28,7 @@ export async function GET(req) {
 
     const user = await prisma.user.findUnique({
       where: { id: parseInt(userId) },
-      include: { role: true }
+      include: { role: true, school: true }
     });
 
     if (!user) {
@@ -43,9 +43,10 @@ export async function GET(req) {
       };
 
       if (['Teacher', 'Teaching Assistant', 'Teacher Assistant'].includes(userRole)) {
-        whereCondition.assignments = {
-          some: { userId: parseInt(userId) }
-        };
+        whereCondition.OR = [
+          { assignments: { some: { userId: parseInt(userId) } } },
+          { program: { schoolId: user.schoolId } }
+        ];
       }
 
       const course = await prisma.course.findFirst({
@@ -147,9 +148,10 @@ export async function GET(req) {
     const courses = await prisma.course.findMany({
       where: {
         ...(isRestricted && {
-          assignments: {
-            some: { userId: parseInt(userId) },
-          },
+          OR: [
+            { assignments: { some: { userId: parseInt(userId) } } },
+            { program: { schoolId: user.schoolId } }
+          ]
         }),
         ...(programId && { programId: parseInt(programId) }),
         ...(schoolId && {

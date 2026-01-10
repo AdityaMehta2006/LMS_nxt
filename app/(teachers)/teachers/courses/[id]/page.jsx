@@ -24,6 +24,8 @@ import Createunitmodal from "../../../../client/components/Createunitmodal";
 import CreateTopicmodal from "../../../../client/components/CreateTopicmodal";
 import ScriptDialogue from "../../../../client/components/ScriptDialogue";
 import ReviewDialogue from "../../../../client/components/ReviewDialogue";
+import CourseHeader from "@/app/client/components/CourseHeader";
+import TopicTimeline from "@/app/client/components/TopicTimeline";
 
 export default function CourseStructureDesign() {
   const [course, setCourse] = useState(null);
