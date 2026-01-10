@@ -58,6 +58,10 @@ export async function GET(req) {
           { assignments: { some: { userId: parseInt(userId) } } },
           { program: { schoolId: user.schoolId } }
         ];
+        // Conditional push to avoid null schoolId error
+        if (user.schoolId) {
+          whereCondition.OR.push({ program: { schoolId: user.schoolId } });
+        }
       }
 
       const course = await prisma.course.findFirst({
