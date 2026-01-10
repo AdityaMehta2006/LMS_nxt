@@ -3,8 +3,25 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+import { cookies } from "next/headers";
+
+export async function GET(req) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      include: { role: true }
+    });
+
+    if (!user || user.role?.roleName !== 'Admin') {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     const totalUsers = await prisma.user.count();
 
     const allRoles = await prisma.role.findMany();

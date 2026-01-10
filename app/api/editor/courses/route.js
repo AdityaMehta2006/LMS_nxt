@@ -4,8 +4,27 @@ import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+import { cookies } from "next/headers";
+
 export async function GET() {
     try {
+        const cookieStore = await cookies();
+        const userId = cookieStore.get("userId")?.value;
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+            include: { role: true }
+        });
+
+        // Allow Editors, Publishers, Admins
+        const allowedRoles = ['editor', 'publisher', 'admin'];
+        if (!user || !allowedRoles.includes(user.role?.roleName?.toLowerCase())) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
         const courses = await prisma.course.findMany({
             where: {
                 status: "Active"

@@ -23,8 +23,18 @@ export async function GET() {
         where: { id: parseInt(userId) },
         include: { role: true }
       });
+
       const roleName = user?.role?.roleName?.toLowerCase();
+
+      // Enforce Role Check
+      const allowedRoles = ['editor', 'publisher', 'admin'];
+      if (!allowedRoles.includes(roleName)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
       canPublish = (roleName === "publisher") || user?.role?.canPublishContent || false;
+    } else {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // 1. Fetch Active courses (same as course list)

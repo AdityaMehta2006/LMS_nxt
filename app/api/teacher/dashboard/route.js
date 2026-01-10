@@ -30,6 +30,11 @@ export async function GET(req) {
         });
         const userRole = user?.role?.roleName || "Teacher";
 
+        const allowedRoles = ['teacher', 'teacher assistant', 'teaching assistant', 'publisher', 'admin'];
+        if (!allowedRoles.includes(userRole.toLowerCase())) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+
         // 1. Fetch courses assigned to user (Active only) to ensure consistency with "Your Courses"
         const courses = await prisma.course.findMany({
             where: {
