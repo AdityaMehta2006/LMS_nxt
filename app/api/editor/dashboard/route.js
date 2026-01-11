@@ -116,6 +116,7 @@ export async function GET() {
               topic_title: topic.title,
               workflow_status: topic.workflowStatus, // Will be mapped below
               estimated_duration_min: topic.estimatedDurationMin,
+              actual_duration_min: topic.actualDurationMin,
               course_title: course.title,
               unit_title: section.title,
               program_name: course.program?.programName || "Unknown Program",
@@ -139,6 +140,7 @@ export async function GET() {
       topic_title: topic.topic_title,
       workflow_status: mapStatus(topic.workflow_status),
       estimated_duration_min: topic.estimated_duration_min,
+      actual_duration_min: topic.actual_duration_min,
       course_title: topic.course_title,
       unit_title: topic.unit_title,
       program_name: topic.program_name,

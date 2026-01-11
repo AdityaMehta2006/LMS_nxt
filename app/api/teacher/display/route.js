@@ -131,6 +131,7 @@ export async function GET(req) {
               content_id: item.id,
               name: item.title,
               estimatedTime: item.estimatedDurationMin || 0,
+              actual_duration_min: item.actualDurationMin || 0,
               status: mapWorkflowStatus(item.workflowStatus),
               learning_objectives: item.learningObjectives,
               videoLink: item.videoLink,

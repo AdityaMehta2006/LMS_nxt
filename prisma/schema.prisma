@@ -149,6 +149,7 @@ model ContentItem {
   sectionId             Int     @map("section_id")
   title                 String
   estimatedDurationMin  Int?    @map("estimated_duration_min")
+  actualDurationMin     Int?    @map("actual_duration_min")
   learningObjectives    String? @map("learning_objectives")
   workflowStatus        WorkflowStatus @default(Planned) @map("workflow_status")
   videoLink             String? @map("video_link")

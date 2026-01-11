@@ -59,7 +59,20 @@ export default function ReviewDialogue({ open, onClose, topic, onFeedbackSubmit,
                             <Typography variant="body2" color="text.secondary" noWrap sx={{ maxWidth: 300 }}>
                                 {topic.videoLink || "No video link available"}
                             </Typography>
+                            <Typography variant="body2" color="text.secondary" noWrap sx={{ maxWidth: 300 }}>
+                                {topic.videoLink || "No video link available"}
+                            </Typography>
                         </Box>
+                        {topic.actual_duration_min && (
+                            <Box sx={{ mr: 2 }}>
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Duration
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {topic.actual_duration_min} min
+                                </Typography>
+                            </Box>
+                        )}
                         <Button
                             variant="contained"
                             startIcon={<PlayCircle size={18} />}
