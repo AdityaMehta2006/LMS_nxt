@@ -210,26 +210,41 @@ export default function CourseStructureDesign() {
     }
   };
 
-  const handleApprove = async (topicId) => {
+  const handleApprove = async (topicOrId) => {
+    // Handle both ID (from ReviewDialogue) and Topic Object (from TopicTimeline)
+    const topicId = typeof topicOrId === 'object' ? topicOrId.content_id || topicOrId.id : topicOrId;
+    const status = typeof topicOrId === 'object' ? topicOrId.status || topicOrId.workflow_status || topicOrId.workflowStatus : null;
+
+    const isMaterialsApproval = status?.toLowerCase() === 'scripted';
+
     try {
-      const res = await fetch(`/api/topics/update-status`, {
+      let apiUrl = `/api/teacher/approve-video`;
+      let bodyData = { topicId };
+
+      if (isMaterialsApproval) {
+        apiUrl = `/api/topics/approve-materials`;
+        // approve-materials handles status transition to Editing internally
+      }
+
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          topicId: topicId,
-          newStatus: 'Approved'
-        }),
+        body: JSON.stringify(bodyData),
       });
 
       if (res.ok) {
+        setOpenReviewModal(false);
+        setCurrentTopic(null);
         fetchCourse();
       } else {
-        alert("Failed to approve topic");
+        const err = await res.json();
+        alert(`Failed to approve: ${err.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error approving topic:', error);
+      alert(`Error approving topic: ${error.message}`);
     }
   };
 
@@ -259,7 +274,7 @@ export default function CourseStructureDesign() {
   if (!course) return <div className="p-8 text-center">Course not found</div>;
 
   const userRole = course.userRole;
-  const canApprove = ['teaching assistant', 'teacher assistant', 'publisher'].includes(userRole?.toLowerCase());
+  const canApprove = ['teaching assistant', 'teacher assistant', 'admin'].includes(userRole?.toLowerCase());
 
   return (
     <div className="min-h-screen bg-transparent p-6 pb-20">
