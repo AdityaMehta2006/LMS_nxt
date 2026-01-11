@@ -15,12 +15,20 @@ export default function CourseHeader({ course, onBack }) {
     const allTopics = units.flatMap((u) => u.topics || []);
 
     const totalMinutes = allTopics.reduce((acc, topic) => {
-        return acc + (parseInt(topic.estimated_duration_min) || parseInt(topic.estimatedTime) || 0);
+        const duration = parseInt(topic.actual_duration_min) || parseInt(topic.estimated_duration_min) || parseInt(topic.estimatedTime) || 0;
+        return acc + duration;
     }, 0);
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    const durationString = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+    // Format: "5.2 hrs" or similar as requested "convert it into hours"
+    // User asked: "ont he top for total time convert it into hours"
+    // "5h 20m" is also good, but maybe "5.3 hrs" is what they meant?
+    // "5.2 hrs" is usually decimal hours.
+    // Let's stick to "5h 20m" which is clearer, OR "5.3 hrs" if strictly requested.
+    // User said: "on the top for total time convert it into hours" - likely means total as hours.
+    // Let's do rounded decimal: (totalMinutes / 60).toFixed(1) + " hrs"
+    const durationString = (totalMinutes / 60).toFixed(1) + " hrs";
 
     const completedTopics = allTopics.filter(t => t.status === "published" || t.status === "Published").length;
     const progress = allTopics.length > 0 ? Math.round((completedTopics / allTopics.length) * 100) : 0;

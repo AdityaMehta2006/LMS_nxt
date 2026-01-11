@@ -230,38 +230,44 @@ export default function TopicTimeline({
                                                     </h4>
 
                                                     {/* Workflow Progress Bar */}
-                                                    <div className="flex gap-1 mt-2 mb-1 w-32 h-1.5 bg-gray-100 dark:bg-gray-700/50 rounded-full overflow-hidden">
-                                                        {/* Status Order: Planned -> Scripted -> Editing -> Post-Editing -> Ready/Under_Review -> Approved -> Published */}
-                                                        {/* We simplify for visualization: 4 segments */}
+                                                    {/* Workflow Progress Bar */}
+                                                    <div className="flex gap-1.5 mt-2.5 mb-1.5 w-40 h-2 bg-gray-100 dark:bg-gray-700/50 rounded-full overflow-hidden p-0.5">
                                                         {(() => {
                                                             const s = topic.status?.toLowerCase() || 'planned';
                                                             const normalized = s.replace(/-/g, '_');
 
-                                                            const levels = {
-                                                                'planned': 0,
-                                                                'scripted': 1,
-                                                                'editing': 2,
-                                                                'post_editing': 2,
-                                                                'ready_for_video_prep': 3,
-                                                                'readyforvideoprep': 3,
-                                                                'under_review': 3,
-                                                                'approved': 3,
-                                                                'published': 4
-                                                            };
-                                                            const currentLevel = levels[normalized] || 0;
-                                                            return Array.from({ length: 4 }).map((_, i) => (
-                                                                <div
-                                                                    key={i}
-                                                                    className={cn(
-                                                                        "h-full flex-1 rounded-full opacity-80",
-                                                                        i < currentLevel
-                                                                            ? "bg-blue-500" // Completed steps
-                                                                            : i === currentLevel && i > 0
-                                                                                ? "bg-blue-500 animate-pulse" // Current active step (if started)
-                                                                                : "bg-gray-200 dark:bg-gray-700" // Future steps
-                                                                    )}
-                                                                />
-                                                            ));
+                                                            // Define stages with their colors
+                                                            const stages = [
+                                                                { id: 'scripted', color: 'bg-blue-500' },
+                                                                { id: 'editing', color: 'bg-amber-500' },
+                                                                { id: 'under_review', color: 'bg-purple-500' },
+                                                                { id: 'approved', color: 'bg-emerald-500' },
+                                                                { id: 'published', color: 'bg-green-600' }
+                                                            ];
+
+                                                            // Determine current level
+                                                            let currentLevel = 0; // Planned = 0
+                                                            if (normalized === 'scripted') currentLevel = 1;
+                                                            if (['editing', 'post_editing', 'readyforvideoprep', 'ready_for_video_prep'].includes(normalized)) currentLevel = 2;
+                                                            if (normalized === 'under_review') currentLevel = 3;
+                                                            if (normalized === 'approved') currentLevel = 4;
+                                                            if (normalized === 'published') currentLevel = 5;
+
+                                                            return stages.map((stage, i) => {
+                                                                const isActive = (i + 1) === currentLevel;
+                                                                const isCompleted = (i + 1) < currentLevel;
+
+                                                                return (
+                                                                    <div
+                                                                        key={i}
+                                                                        className={cn(
+                                                                            "h-full flex-1 rounded-full transition-all duration-500",
+                                                                            isCompleted ? stage.color : (isActive ? `${stage.color} animate-pulse` : "bg-gray-200 dark:bg-gray-700")
+                                                                        )}
+                                                                        title={stage.id}
+                                                                    />
+                                                                );
+                                                            });
                                                         })()}
                                                     </div>
 

@@ -58,6 +58,7 @@ const EditorDash = () => {
   const [currentTopic, setCurrentTopic] = useState(null);
   const [videoLink, setVideoLink] = useState("");
   const [additionalLink, setAdditionalLink] = useState("");
+  const [actualDuration, setActualDuration] = useState("");
   const [viewedFeedbackTopics, setViewedFeedbackTopics] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
@@ -120,6 +121,7 @@ const EditorDash = () => {
       setCurrentTopic(topic);
       setVideoLink(topic.video_link || "");
       setAdditionalLink(topic.additional_link || "");
+      setActualDuration(topic.actual_duration_min || topic.estimated_duration_min || "");
       setUploadModalOpen(true);
     }
   };
@@ -134,7 +136,8 @@ const EditorDash = () => {
           topicId: currentTopic.content_id,
           videoLink: videoLink,
           additionalLink: additionalLink,
-          newStatus: 'Under_Review'
+          newStatus: 'Under_Review',
+          actualDuration: actualDuration
         }),
       });
       if (res.ok) {
@@ -414,6 +417,15 @@ const EditorDash = () => {
               fullWidth
               value={videoLink}
               onChange={(e) => setVideoLink(e.target.value)}
+              variant="outlined"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+            <TextField
+              label="Actual Duration (minutes)"
+              fullWidth
+              type="number"
+              value={actualDuration}
+              onChange={(e) => setActualDuration(e.target.value)}
               variant="outlined"
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
             />

@@ -79,10 +79,10 @@ const TeacherDash = () => {
 
     const handleApproveTopic = async (topicId) => {
         try {
-            const res = await fetch(`/api/topics/update-status`, {
+            const res = await fetch(`/api/teacher/approve-video`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ topicId, newStatus: "Approved" }),
+                body: JSON.stringify({ topicId }),
             });
             if (!res.ok) throw new Error("Failed to approve topic");
             setOpenReviewModal(false);
@@ -95,7 +95,7 @@ const TeacherDash = () => {
 
     const handleFeedbackSubmit = async (topicId, feedback) => {
         try {
-            const res = await fetch("/api/teacher/submit-feedback", {
+            const res = await fetch("/api/teacher/reject-video", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ topicId, feedback }),
