@@ -77,14 +77,31 @@ const TeacherDash = () => {
         setOpenReviewModal(true);
     };
 
-    const handleApproveTopic = async (topicId) => {
+    const handleApproveTopic = async (topicOrId) => {
+        // Handle both ID (from ReviewDialogue) and Topic Object (from TopicTimeline)
+        const topicId = typeof topicOrId === 'object' ? topicOrId.content_id || topicOrId.id : topicOrId;
+        const status = typeof topicOrId === 'object' ? topicOrId.status || topicOrId.workflow_status || topicOrId.workflowStatus : null;
+
+        // Determine action based on status (if available) or assume video approval if coming from modal (no status passed usually, but we check)
+        const isMaterialsApproval = status?.toLowerCase() === 'scripted';
+
+        // NOTE: If status is Under_Review, we should conceptually use approve-video.
+        // If coming from ReviewDialogue, we just have ID, but we know it's for video review.
+
         try {
-            const res = await fetch(`/api/teacher/approve-video`, {
+            let apiUrl = `/api/teacher/approve-video`;
+            if (isMaterialsApproval) {
+                apiUrl = `/api/topics/approve-materials`;
+            }
+
+            const res = await fetch(apiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ topicId }),
             });
             if (!res.ok) throw new Error("Failed to approve topic");
+
+            // Success
             setOpenReviewModal(false);
             setCurrentTopic(null);
             fetchDashboardData();

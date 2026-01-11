@@ -317,7 +317,7 @@ export default function TopicTimeline({
                                                             <span>
                                                                 <IconButton
                                                                     size="small"
-                                                                    onClick={() => onApproveTopic(topic.content_id)}
+                                                                    onClick={() => onApproveTopic(topic)}
                                                                     disabled={isLocked || !['under_review', 'scripted'].includes(topic.status?.toLowerCase())}
                                                                     className={cn("text-emerald-600 disabled:text-gray-300")}
                                                                 >
