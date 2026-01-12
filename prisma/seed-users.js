@@ -4,56 +4,56 @@ module.exports = [
     "email": "admin@CU.in",
     "firstName": "Admin",
     "lastName": "User",
-    "password": "eFtWmp8m"
+    "password": "admin.online@2026"
   },
   {
     "role": "teacher",
     "email": "testteacher@CU.in",
     "firstName": "Test",
     "lastName": "Teacher",
-    "password": "5EgrKplI"
+    "password": "testteacher.online@2026"
   },
   {
     "role": "editor",
     "email": "editor1@CU.in",
     "firstName": "Editor",
     "lastName": "One",
-    "password": "Ktg0cO3s"
+    "password": "editor1.online@2026"
   },
   {
     "role": "editor",
     "email": "editor2@CU.in",
     "firstName": "Editor",
     "lastName": "Two",
-    "password": "zVoksvDt"
+    "password": "editor2.online@2026"
   },
   {
     "role": "teaching assistant",
     "email": "ta1@CU.in",
     "firstName": "TA",
     "lastName": "One",
-    "password": "ETiQsyNL"
+    "password": "ta1.online@2026"
   },
   {
     "role": "teaching assistant",
     "email": "ta2@CU.in",
     "firstName": "TA",
     "lastName": "Two",
-    "password": "7IzxN98u"
+    "password": "ta2.online@2026"
   },
   {
     "role": "publisher",
     "email": "publisher1@CU.in",
     "firstName": "Publisher",
     "lastName": "One",
-    "password": "TeCUmx4v"
+    "password": "publisher1.online@2026"
   },
   {
     "role": "publisher",
     "email": "publisher2@CU.in",
     "firstName": "Publisher",
     "lastName": "Two",
-    "password": "dAr1XgxM"
+    "password": "publisher2.online@2026"
   },
   {
     "role": "teacher",
@@ -61,7 +61,7 @@ module.exports = [
     "firstName": "Shaeril",
     "lastName": "Almeida",
     "isLegacy": true,
-    "password": "KCtMoZWP"
+    "password": "shaerilmichaelalmeida.online@2026"
   },
   {
     "role": "teacher",
@@ -69,7 +69,7 @@ module.exports = [
     "firstName": "Jagadeesh",
     "lastName": "",
     "isLegacy": true,
-    "password": "MmfY3Hpk"
+    "password": "Jagadeshchander.online@2026"
   },
   {
     "role": "teacher",
@@ -77,7 +77,7 @@ module.exports = [
     "firstName": "Jinny",
     "lastName": "John",
     "isLegacy": true,
-    "password": "CvBQPzh2"
+    "password": "jinnyjohn.online@2026"
   },
   {
     "role": "teacher",
@@ -85,7 +85,7 @@ module.exports = [
     "firstName": "James",
     "lastName": "Joseph",
     "isLegacy": true,
-    "password": "W4iOCnMu"
+    "password": "jamesjoseph.online@2026"
   },
   {
     "role": "teacher",
@@ -93,7 +93,7 @@ module.exports = [
     "firstName": "Vaidhehi",
     "lastName": "V",
     "isLegacy": true,
-    "password": "zQRFFl8f"
+    "password": "vaidhehiv.online@2026"
   },
   {
     "role": "teacher",
@@ -101,7 +101,7 @@ module.exports = [
     "firstName": "Binayak",
     "lastName": "Dutta",
     "isLegacy": true,
-    "password": "5GSKxY5r"
+    "password": "binayakdutta.online@2026"
   },
   {
     "role": "teacher",
@@ -109,7 +109,7 @@ module.exports = [
     "firstName": "Suresh",
     "lastName": "Kalaimani",
     "isLegacy": true,
-    "password": "KnDzKQGN"
+    "password": "sureshkalaimani.online@2026"
   },
   {
     "role": "teacher",
@@ -117,7 +117,7 @@ module.exports = [
     "firstName": "Cynthia",
     "lastName": "T",
     "isLegacy": true,
-    "password": "t0Cz8kKy"
+    "password": "cynthiat.online@2026"
   },
   {
     "role": "teacher",
@@ -125,7 +125,7 @@ module.exports = [
     "firstName": "Nizar",
     "lastName": "Banu",
     "isLegacy": true,
-    "password": "6ojMGKWB"
+    "password": "nizarbanu.online@2026"
   },
   {
     "role": "teacher",
@@ -133,7 +133,7 @@ module.exports = [
     "firstName": "Nisha",
     "lastName": "Varghese",
     "isLegacy": true,
-    "password": "gxii7Dvi"
+    "password": "nishavarghese.online@2026"
   },
   {
     "role": "teacher",
@@ -141,7 +141,7 @@ module.exports = [
     "firstName": "Manasa",
     "lastName": "Kulkarni",
     "isLegacy": true,
-    "password": "XgKMwaop"
+    "password": "manasakulkarni.online@2026"
   },
   {
     "role": "teacher",
@@ -149,7 +149,7 @@ module.exports = [
     "firstName": "Thirunavukkarasu",
     "lastName": "V",
     "isLegacy": true,
-    "password": "UjIhhMzt"
+    "password": "thirunavukkarasuv.online@2026"
   },
   {
     "role": "teacher",
@@ -157,7 +157,7 @@ module.exports = [
     "firstName": "Rohini",
     "lastName": "V",
     "isLegacy": true,
-    "password": "Qj8czYjO"
+    "password": "rohiniv.online@2026"
   },
   {
     "role": "teacher",
@@ -165,7 +165,7 @@ module.exports = [
     "firstName": "Deepa",
     "lastName": "V Jose",
     "isLegacy": true,
-    "password": "7O3LE69E"
+    "password": "deepavjose.online@2026"
   },
   {
     "role": "teacher",
@@ -173,7 +173,7 @@ module.exports = [
     "firstName": "Sandeep",
     "lastName": "J",
     "isLegacy": true,
-    "password": "3NAkeUSc"
+    "password": "sandeepj.online@2026"
   },
   {
     "role": "teacher",
@@ -181,7 +181,7 @@ module.exports = [
     "firstName": "Puneeth",
     "lastName": "V",
     "isLegacy": true,
-    "password": "svaWZHwe"
+    "password": "puneethv.online@2026"
   },
   {
     "role": "teacher",
@@ -189,7 +189,7 @@ module.exports = [
     "firstName": "Sangeetha",
     "lastName": "G",
     "isLegacy": true,
-    "password": "LvBTt2Vn"
+    "password": "sangeethag.online@2026"
   },
   {
     "role": "teacher",
@@ -197,7 +197,7 @@ module.exports = [
     "firstName": "Beaulah",
     "lastName": "S",
     "isLegacy": true,
-    "password": "rr5ywTE5"
+    "password": "beaulahs.online@2026"
   },
   {
     "role": "teacher",
@@ -205,7 +205,7 @@ module.exports = [
     "firstName": "Sridevi",
     "lastName": "R",
     "isLegacy": true,
-    "password": "TnuDuCHK"
+    "password": "sridevir.online@2026"
   },
   {
     "role": "teacher",
@@ -213,7 +213,7 @@ module.exports = [
     "firstName": "Nismon",
     "lastName": "Rio",
     "isLegacy": true,
-    "password": "KIJ1xZJh"
+    "password": "nismonrio.online@2026"
   },
   {
     "role": "teacher",
@@ -221,7 +221,7 @@ module.exports = [
     "firstName": "Laxmi",
     "lastName": "Basappa",
     "isLegacy": true,
-    "password": "3ufWE0R8"
+    "password": "laxmibasappa.online@2026"
   },
   {
     "role": "teacher",
@@ -229,7 +229,7 @@ module.exports = [
     "firstName": "Manimekala",
     "lastName": "B",
     "isLegacy": true,
-    "password": "gjwUfj6D"
+    "password": "manimekalab.online@2026"
   },
   {
     "role": "teacher",
@@ -237,7 +237,7 @@ module.exports = [
     "firstName": "Balakrishnan",
     "lastName": "C",
     "isLegacy": true,
-    "password": "l16n7bAY"
+    "password": "balakrishnanc.online@2026"
   },
   {
     "role": "teacher",
@@ -245,7 +245,7 @@ module.exports = [
     "firstName": "Deepa",
     "lastName": "S",
     "isLegacy": true,
-    "password": "OumjqbDK"
+    "password": "deepas.online@2026"
   },
   {
     "role": "teacher",
@@ -253,7 +253,7 @@ module.exports = [
     "firstName": "Jayapriya",
     "lastName": "J",
     "isLegacy": true,
-    "password": "xAfXzvZe"
+    "password": "jayapriyaj.online@2026"
   },
   {
     "role": "teacher",
@@ -261,14 +261,14 @@ module.exports = [
     "firstName": "Umamaheswari",
     "lastName": "D",
     "isLegacy": true,
-    "password": "IDH91aUa"
+    "password": "umamaheswarid.online@2026"
   },
   {
     "role": "teacher",
     "email": "maria.fulgen@christuniversity.in",
     "firstName": "Maria",
     "lastName": "Fulgen",
-    "password": "3ee0278a",
+    "password": "mariafulgen.online@2026",
     "isLegacy": true
   },
   {
@@ -276,7 +276,7 @@ module.exports = [
     "email": "pooja.jain@christuniversity.in",
     "firstName": "Pooja",
     "lastName": "Jain",
-    "password": "2f15cad3",
+    "password": "poojajain.online@2026",
     "isLegacy": true
   },
   {
@@ -284,7 +284,7 @@ module.exports = [
     "email": "sudhamshu.narayan@christuniversity.in",
     "firstName": "Sudhamshu",
     "lastName": "Narayan",
-    "password": "66310aaa",
+    "password": "sudhamshunarayan.online@2026",
     "isLegacy": true
   },
   {
@@ -292,7 +292,7 @@ module.exports = [
     "email": "lakshmi.b@christuniversity.in",
     "firstName": "Lakshmi",
     "lastName": "B",
-    "password": "902c6b6f",
+    "password": "lakshmib.online@2026",
     "isLegacy": true
   },
   {
@@ -300,7 +300,7 @@ module.exports = [
     "email": "geetanjali.purswani@christuniversity.in",
     "firstName": "Geetanjali",
     "lastName": "Purswani",
-    "password": "830766c8",
+    "password": "geetanjalipurswani.online@2026",
     "isLegacy": true
   },
   {
@@ -308,7 +308,7 @@ module.exports = [
     "email": "arpita.goswami@christuniversity.in",
     "firstName": "Arpita",
     "lastName": "Goswami",
-    "password": "6db237af",
+    "password": "arpitagoswami.online@2026",
     "isLegacy": true
   },
   {
@@ -316,7 +316,7 @@ module.exports = [
     "email": "anjali.pk@christuniversity.in",
     "firstName": "Anjali",
     "lastName": "Pk",
-    "password": "bbd7397a",
+    "password": "anjalipk.online@2026",
     "isLegacy": true
   },
   {
@@ -324,7 +324,7 @@ module.exports = [
     "email": "gerard.rassendren@christuniversity.in",
     "firstName": "Gerard",
     "lastName": "Rassendren",
-    "password": "566cdd26",
+    "password": "gerardrassendren.online@2026",
     "isLegacy": true
   },
   {
@@ -332,7 +332,7 @@ module.exports = [
     "email": "aleena.jose@christuniversity.in",
     "firstName": "Aleena",
     "lastName": "Jose",
-    "password": "a02b263f",
+    "password": "aleenajose.online@2026",
     "isLegacy": true
   },
   {
@@ -340,7 +340,7 @@ module.exports = [
     "email": "ritika.b@christuniversity.in",
     "firstName": "Ritika",
     "lastName": "B",
-    "password": "146e07d2",
+    "password": "ritikab.online@2026",
     "isLegacy": true
   },
   {
@@ -348,7 +348,7 @@ module.exports = [
     "email": "joseph.edward@christuniversity.in",
     "firstName": "Joseph",
     "lastName": "Edward",
-    "password": "99397237",
+    "password": "josephedward.online@2026",
     "isLegacy": true
   },
   {
@@ -356,7 +356,7 @@ module.exports = [
     "email": "anupama.nayar@christuniversity.in",
     "firstName": "Anupama",
     "lastName": "Nayar",
-    "password": "1cd52ee2",
+    "password": "anupamanayar.online@2026",
     "isLegacy": true
   },
   {
@@ -364,7 +364,7 @@ module.exports = [
     "email": "saji.varghese@christuniversity.in",
     "firstName": "Saji",
     "lastName": "Varghese",
-    "password": "fcc95645",
+    "password": "sajivarghese.online@2026",
     "isLegacy": true
   },
   {
@@ -372,7 +372,7 @@ module.exports = [
     "email": "abhaya.nb@christuniversity.in",
     "firstName": "Abhaya",
     "lastName": "Nb",
-    "password": "64cc00c2",
+    "password": "abhayanb.online@2026",
     "isLegacy": true
   },
   {
@@ -380,7 +380,7 @@ module.exports = [
     "email": "suhash.s@christuniversity.in",
     "firstName": "Suhash",
     "lastName": "S",
-    "password": "375c7dea",
+    "password": "suhashs.online@2026",
     "isLegacy": true
   },
   {
@@ -388,6 +388,6 @@ module.exports = [
     "email": "sankar.varma@christuniversity.in",
     "firstName": "Sankar",
     "lastName": "Varma",
-    "password": "1ca682dc"
+    "password": "sankarvarma.online@2026"
   }
 ];
